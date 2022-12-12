@@ -1,27 +1,30 @@
-package service
+package crypto
 
 import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
+	"os"
 )
 
 var bytes = []byte{35, 46, 57, 24, 85, 35, 24, 74, 87, 35, 88, 98, 66, 32, 14, 05}
 
-type AuthServiceClient interface {
+type CryptoServiceClient interface {
+	Encrypt(text string) (string, error)
+	Decrypt(text string) (string, error)
 }
 
-type authService struct {
+type cryptoService struct {
 	secret string
 }
 
-func NewAuth(_secret string) AuthServiceClient {
-	return &authService{
-		secret: _secret,
+func NewCrypto() CryptoServiceClient {
+	return &cryptoService{
+		secret: os.Getenv("CRYPTO_SECRET"),
 	}
 }
 
-func (a *authService) Encrypt(text string) (string, error) {
+func (a *cryptoService) Encrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secret))
 	if err != nil {
 		return "", err
@@ -33,7 +36,7 @@ func (a *authService) Encrypt(text string) (string, error) {
 	return base64.StdEncoding.EncodeToString(cipherText), nil
 }
 
-func (a *authService) Decrypt(text string) (string, error) {
+func (a *cryptoService) Decrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secret))
 	if err != nil {
 		return "", err
