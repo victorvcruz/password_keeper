@@ -13,10 +13,10 @@ func RequestUserValidate(err error) string {
 		if err.Namespace() == "UserRequest.Email" {
 			return "Invalid email"
 		}
-		if err.Namespace() == "UserRequest.Password" && err.Tag() == "gte" {
+		if err.Namespace() == "UserRequest.MasterPassword" && err.Tag() == "gte" {
 			return "Short password"
 		}
-		if err.Namespace() == "UserRequest.Password" && err.Tag() == "lte" {
+		if err.Namespace() == "UserRequest.MasterPassword" && err.Tag() == "lte" {
 			return "Long password"
 		}
 	}

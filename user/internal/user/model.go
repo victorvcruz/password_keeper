@@ -28,3 +28,19 @@ func (u *User) FillFields(name, email, masterPassword string) {
 	u.CreatedAt = now
 	u.UpdatedAt = now
 }
+
+func (u *User) ToUpdate(name, email, masterPassword string) {
+	now := time.Now()
+
+	if name != "" {
+		u.Name = name
+	}
+	if email != "" {
+		u.Email = email
+	}
+	if masterPassword != "" {
+		u.MasterPassword = masterPassword
+	}
+
+	u.UpdatedAt = now
+}

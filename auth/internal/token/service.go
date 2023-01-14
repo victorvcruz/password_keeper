@@ -1,13 +1,17 @@
 package token
 
 import (
+	"errors"
+	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"os"
+	"strings"
 	"time"
 )
 
 type TokenServiceClient interface {
 	CreateTokenByID(id int) (string, error)
+	DecodeTokenReturnId(token string) (string, error)
 }
 
 type TokenService struct {
@@ -33,4 +37,26 @@ func (t *TokenService) CreateTokenByID(id int) (string, error) {
 	}
 
 	return tokenString, err
+}
+
+func (t *TokenService) DecodeTokenReturnId(token string) (string, error) {
+
+	tokenStr := strings.ReplaceAll(token, "Bearer ", "")
+	tokenDecode := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(tokenStr, tokenDecode, func(tokenStr *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_TOKEN_KEY")), nil
+	})
+	if err != nil {
+		return "", err
+	}
+
+	switch tokenDecode["id"].(type) {
+	case string:
+		return tokenDecode["id"].(string), nil
+	case float64:
+		return fmt.Sprintf("%0.f", tokenDecode["id"].(float64)), nil
+	case int:
+		return fmt.Sprintf("%d", tokenDecode["id"].(int)), nil
+	}
+	return "", errors.New("unprocessable token")
 }

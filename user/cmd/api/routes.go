@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 	"user.com/cmd/api/handlers"
-	v1 "user.com/pkg/proto/v1"
+	v1 "user.com/pkg/pb"
 )
 
 func New(user *handlers.UserHandler) error {

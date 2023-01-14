@@ -3,14 +3,15 @@ package handlers
 import (
 	"auth.com/internal/auth"
 	"auth.com/internal/utils/errors"
-	proto "auth.com/pkg/proto/v1"
+	pb2 "auth.com/pkg/pb"
 	"context"
+	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
-	proto.UnimplementedLoginServer
+	pb2.UnimplementedAuthServer
 	service auth.AuthServiceClient
 }
 
@@ -20,7 +21,7 @@ func NewAuthHandler(_authService auth.AuthServiceClient) *AuthHandler {
 	}
 }
 
-func (a *AuthHandler) Login(ctx context.Context, req *proto.LoginRequest) (*proto.LoginResponse, error) {
+func (a *AuthHandler) Login(ctx context.Context, req *pb2.LoginRequest) (*pb2.LoginResponse, error) {
 
 	login := auth.LoginRequest{Email: req.Email, Password: req.Password}
 
@@ -36,5 +37,25 @@ func (a *AuthHandler) Login(ctx context.Context, req *proto.LoginRequest) (*prot
 		}
 	}
 
-	return &proto.LoginResponse{AcessToken: token}, nil
+	return &pb2.LoginResponse{AcessToken: token}, nil
+}
+
+func (a *AuthHandler) AuthToken(ctx context.Context, req *pb2.AuthTokenRequest) (*pb2.AuthTokenResponse, error) {
+
+	login := auth.AuthTokenRequest{AcessToken: req.AcessToken}
+
+	id, err := a.service.ValidateToken(login)
+	if err != nil {
+		switch err.(type) {
+		case *errors.NotFoundIdError:
+			return nil, status.Error(codes.InvalidArgument, "Not found user id")
+		case *jwt.ValidationError:
+			return nil, status.Error(codes.Unauthenticated, "Invalid token ")
+		default:
+			return nil, status.Error(codes.Internal, "Internal server error")
+		}
+	}
+
+	valid := id != ""
+	return &pb2.AuthTokenResponse{Id: id, Authorize: valid}, nil
 }

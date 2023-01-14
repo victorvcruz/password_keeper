@@ -2,10 +2,10 @@ package errors
 
 import "fmt"
 
-type NotFoundEmailError struct {
+type NotFoundIdError struct {
 	Path string
 }
 
-func (e *NotFoundEmailError) Error() string {
-	return fmt.Sprintf("Incorrect email" + e.Path)
+func (e *NotFoundIdError) Error() string {
+	return fmt.Sprintf("Incorrect id" + e.Path)
 }

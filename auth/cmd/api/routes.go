@@ -2,7 +2,7 @@ package api
 
 import (
 	"auth.com/cmd/api/handlers"
-	v1 "auth.com/pkg/proto/v1"
+	"auth.com/pkg/pb"
 	"fmt"
 	"google.golang.org/grpc"
 	"net"
@@ -17,7 +17,7 @@ func New(user *handlers.AuthHandler) error {
 	}
 
 	app := grpc.NewServer()
-	v1.RegisterLoginServer(app, user)
+	pb.RegisterAuthServer(app, user)
 
 	err = app.Serve(listener)
 	if err != nil {

@@ -2,21 +2,26 @@ syntax = "proto3";
 
 option go_package = "./v1";
 
-// The service definition.
 service User {
-  // Sends a greeting
   rpc CreateUser (UserRequest) returns (UserResponse) {}
+  rpc FindUser   (Empty)       returns (UserResponse) {}
+  rpc UpdateUser (UserRequest) returns (UserResponse) {}
+  rpc DeleteUser (Empty) returns (MessageResponse) {}
 }
 
-// The request message containing the user's name.
+message Empty {}
+
 message UserRequest {
   string name = 1;
   string email = 2;
   string masterPassword = 3;
 }
 
-// The response message containing the greetings
 message UserResponse {
   string name = 1;
   string email = 2;
+}
+
+message MessageResponse {
+  string message = 1;
 }

@@ -9,6 +9,7 @@ import (
 
 type AuthServiceClient interface {
 	Login(login LoginRequest) (string, error)
+	ValidateToken(auth AuthTokenRequest) (string, error)
 }
 
 type authService struct {
@@ -51,4 +52,23 @@ func (a *authService) Login(login LoginRequest) (string, error) {
 	}
 
 	return jwt, nil
+}
+
+func (a *authService) ValidateToken(auth AuthTokenRequest) (string, error) {
+
+	id, err := a.token.DecodeTokenReturnId(auth.AcessToken)
+	if err != nil {
+		return "", err
+	}
+
+	user, err := a.repository.UserById(id)
+	if err != nil {
+		return "", err
+	}
+
+	if user == nil {
+		return "", &errors.NotFoundIdError{}
+	}
+
+	return id, nil
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"user.com/cmd/api"
 	"user.com/cmd/api/handlers"
+	auth "user.com/internal/auth"
 	"user.com/internal/crypto"
 	dbmanager "user.com/internal/platform/database"
 	"user.com/internal/user"
@@ -25,12 +26,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
 	}
+
+	authService := auth.NewAuthService()
+
 	crypto := crypto.NewCrypto(os.Getenv("CRYPTO_SECRET"))
 	validate := validator.New()
 	userRepository := user.NewUserRepository(database)
 	userService := user.NewUserService(userRepository, crypto)
 
-	userHandler := handlers.NewUserHandler(userService, validate)
+	userHandler := handlers.NewUserHandler(userService, authService, validate)
 
 	err = api.New(userHandler)
 	if err != nil {
