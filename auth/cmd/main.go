@@ -36,6 +36,6 @@ func main() {
 
 	err = api.New(authHandler)
 	if err != nil {
-		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
+		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}
 }

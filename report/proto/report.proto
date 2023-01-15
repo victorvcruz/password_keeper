@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "./v1";
+
+service User {
+  rpc CreateReport (ReportRequest) returns (ReportResponse) {}
+  rpc ReportByUserId (Empty) returns (ListReportResponse) {}
+}
+
+message Empty {}
+
+message MessageResponse {
+  string message = 1;
+}
+
+message ReportRequest {
+  string action = 1;
+  string description = 2;
+  int64 userId = 3;
+  int64 vaultId = 4;
+}
+
+message ListReportResponse {
+  repeated ReportResponse reports = 1;
+}
+
+message ReportResponse {
+  string action = 1;
+  string description = 2;
+  int64 userId = 3;
+  int64 vaultId = 4;
+  string updatedAt = 5;
+}
