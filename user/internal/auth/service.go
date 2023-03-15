@@ -11,7 +11,8 @@ import (
 )
 
 type AuthServiceClient interface {
-	AuthToken(acessToken string) (string, error)
+	AuthUserToken(acessToken string) (int64, error)
+	AuthServiceToken(acessToken string) error
 }
 
 type authService struct {
@@ -35,15 +36,28 @@ func NewAuthService() AuthServiceClient {
 	}
 }
 
-func (a authService) AuthToken(acessToken string) (string, error) {
+func (a authService) AuthUserToken(acessToken string) (int64, error) {
 	auth, err := a.client.AuthToken(a.ctx, &pb2.AuthTokenRequest{AcessToken: acessToken})
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
 	if !auth.Authorize {
-		return "", &errors.UnauthorizedTokenError{}
+		return 0, &errors.UnauthorizedTokenError{}
 	}
 
 	return auth.Id, nil
+}
+
+func (a authService) AuthServiceToken(acessToken string) error {
+	auth, err := a.client.AuthToken(a.ctx, &pb2.AuthTokenRequest{AcessToken: acessToken})
+	if err != nil {
+		return err
+	}
+
+	if !auth.Authorize {
+		return &errors.UnauthorizedTokenError{}
+	}
+
+	return nil
 }

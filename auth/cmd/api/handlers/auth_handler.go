@@ -5,7 +5,6 @@ import (
 	"auth.com/internal/utils/errors"
 	pb2 "auth.com/pkg/pb"
 	"context"
-	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -49,13 +48,15 @@ func (a *AuthHandler) AuthToken(ctx context.Context, req *pb2.AuthTokenRequest) 
 		switch err.(type) {
 		case *errors.NotFoundIdError:
 			return nil, status.Error(codes.InvalidArgument, "Not found user id")
-		case *jwt.ValidationError:
-			return nil, status.Error(codes.Unauthenticated, "Invalid token ")
+		case *errors.ExpiredTokenError:
+			return nil, status.Error(codes.Unauthenticated, "expired token")
+		case *errors.InvalidTokenError:
+			return nil, status.Error(codes.Unauthenticated, "invalid token")
 		default:
 			return nil, status.Error(codes.Internal, "Internal server error")
 		}
 	}
 
-	valid := id != ""
+	valid := id != 0
 	return &pb2.AuthTokenResponse{Id: id, Authorize: valid}, nil
 }

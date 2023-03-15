@@ -7,9 +7,10 @@ import (
 
 type UserServiceClient interface {
 	CreateUser(user UserRequest) error
-	UpdateUser(id string, req UserRequest) error
-	FindUser(id string) (*User, error)
-	DeleteUser(id string) error
+	UpdateUser(id int64, req UserRequest) error
+	FindUserById(id int64) (*User, error)
+	FindUserByData(id, name, email string) (*User, error)
+	DeleteUser(id int64) error
 }
 
 type userService struct {
@@ -46,7 +47,7 @@ func (u *userService) CreateUser(req UserRequest) error {
 	return nil
 }
 
-func (u *userService) UpdateUser(id string, req UserRequest) error {
+func (u *userService) UpdateUser(id int64, req UserRequest) error {
 
 	if exist := u.repository.ExistEmail(req.Email); exist {
 		return &errors.ConflictEmailError{}
@@ -74,7 +75,7 @@ func (u *userService) UpdateUser(id string, req UserRequest) error {
 	return nil
 }
 
-func (u *userService) FindUser(id string) (*User, error) {
+func (u *userService) FindUserById(id int64) (*User, error) {
 
 	user, err := u.repository.FindById(id)
 	if err != nil {
@@ -84,7 +85,17 @@ func (u *userService) FindUser(id string) (*User, error) {
 	return user, nil
 }
 
-func (u *userService) DeleteUser(id string) error {
+func (u *userService) FindUserByData(id, name, email string) (*User, error) {
+
+	user, err := u.repository.FindByData(id, name, email)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userService) DeleteUser(id int64) error {
 
 	user, err := u.repository.FindById(id)
 	if err != nil {

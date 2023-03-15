@@ -21,6 +21,6 @@ message AuthTokenRequest {
 }
 
 message AuthTokenResponse {
-  string id = 1;
+  int64 id = 1;
   bool authorize= 2;
 }

@@ -6,11 +6,10 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"os"
 	"strings"
-	"time"
 )
 
 type TokenServiceClient interface {
-	CreateTokenByID(id int) (string, error)
+	CreateTokenByID(id int64) (string, error)
 	DecodeTokenReturnId(token string) (string, error)
 }
 
@@ -24,11 +23,10 @@ func NewTokenService() TokenServiceClient {
 	}
 }
 
-func (t *TokenService) CreateTokenByID(id int) (string, error) {
+func (t *TokenService) CreateTokenByID(id int64) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  id,
-		"exp": time.Now().Add(time.Hour * 1).Unix(),
+		"id": id,
 	})
 
 	tokenString, err := token.SignedString([]byte(t.key))

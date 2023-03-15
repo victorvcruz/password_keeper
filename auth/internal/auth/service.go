@@ -5,34 +5,37 @@ import (
 	"auth.com/internal/token"
 	"auth.com/internal/user"
 	"auth.com/internal/utils/errors"
+	"time"
 )
 
 type AuthServiceClient interface {
 	Login(login LoginRequest) (string, error)
-	ValidateToken(auth AuthTokenRequest) (string, error)
+	ValidateToken(auth AuthTokenRequest) (int64, error)
 }
 
 type authService struct {
-	repository user.UserRepositoryClient
-	crypto     crypto.CryptoServiceClient
-	token      token.TokenServiceClient
+	repository  AuthRepositoryClient
+	userService user.UserServiceClient
+	crypto      crypto.CryptoServiceClient
+	token       token.TokenServiceClient
 }
 
 func NewAuthService(
-	_repository user.UserRepositoryClient,
+	_repository AuthRepositoryClient,
+	_userService user.UserServiceClient,
 	_crypto crypto.CryptoServiceClient,
 	_token token.TokenServiceClient,
 ) AuthServiceClient {
 	return &authService{
-		repository: _repository,
-		crypto:     _crypto,
-		token:      _token,
+		repository:  _repository,
+		userService: _userService,
+		crypto:      _crypto,
+		token:       _token,
 	}
 }
 
 func (a *authService) Login(login LoginRequest) (string, error) {
-
-	user, err := a.repository.UserByEmail(login.Email)
+	user, err := a.userService.UserByEmail(login.Email)
 	if err != nil {
 		return "", err
 	}
@@ -51,24 +54,39 @@ func (a *authService) Login(login LoginRequest) (string, error) {
 		return "", err
 	}
 
+	nowTime := time.Now()
+	err = a.repository.Create(&Auth{
+		UserId:    user.Id,
+		Token:     jwt,
+		CreatedAt: nowTime,
+		ExpiredAt: nowTime.Add(time.Hour * 1),
+	})
+
 	return jwt, nil
 }
 
-func (a *authService) ValidateToken(auth AuthTokenRequest) (string, error) {
-
-	id, err := a.token.DecodeTokenReturnId(auth.AcessToken)
+func (a *authService) ValidateToken(auth AuthTokenRequest) (int64, error) {
+	authModel, err := a.repository.FindByToken(auth.AcessToken)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
-	user, err := a.repository.UserById(id)
+	if authModel == nil {
+		return 0, &errors.InvalidTokenError{}
+	}
+
+	if authModel.ExpiredAt.Before(time.Now()) {
+		return 0, &errors.ExpiredTokenError{}
+	}
+
+	user, err := a.userService.UserById(authModel.UserId)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
 	if user == nil {
-		return "", &errors.NotFoundIdError{}
+		return 0, &errors.NotFoundIdError{}
 	}
 
-	return id, nil
+	return user.Id, nil
 }

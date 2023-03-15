@@ -38,6 +38,6 @@ func main() {
 
 	err = api.New(userHandler)
 	if err != nil {
-		log.Fatalf("[START SERVER  FAIL]: %s", err.Error())
+		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}
 }

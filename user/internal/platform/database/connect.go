@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 	"os"
 )
 
@@ -19,7 +20,8 @@ type database struct {
 	port      string
 	dbname    string
 	sslmode   string
-	TimeZone  string
+	timeZone  string
+	schema    string
 }
 
 func NewDatabase() DatabaseClient {
@@ -30,19 +32,21 @@ func NewDatabase() DatabaseClient {
 		port:      os.Getenv("POSTGRES_PORT"),
 		dbname:    os.Getenv("POSTGRES_NAME"),
 		sslmode:   os.Getenv("POSTGRES_SLLMODE"),
-		TimeZone:  os.Getenv("POSTGRES_TIMEZONE"),
+		timeZone:  os.Getenv("POSTGRES_TIMEZONE"),
+		schema:    os.Getenv("POSTGRES_SCHEMA"),
 	}
 }
 
 func (d *database) Connect() (*gorm.DB, error) {
 
 	postgresDSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-		d.localhost, d.user, d.password, d.dbname, d.port, d.sslmode, d.TimeZone)
+		d.localhost, d.user, d.password, d.dbname, d.port, d.sslmode, d.timeZone)
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  postgresDSN,
 		PreferSimpleProtocol: true,
-	}), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
+	}), &gorm.Config{Logger: logger.Default.LogMode(logger.Info),
+		NamingStrategy: schema.NamingStrategy{TablePrefix: fmt.Sprintf("%s.", d.schema), SingularTable: false}})
 
 	if err != nil {
 		return nil, err

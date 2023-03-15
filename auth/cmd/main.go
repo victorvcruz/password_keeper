@@ -26,11 +26,13 @@ func main() {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
 	}
 
-	userRepository := user.NewUserRepository(database)
+	userService := user.NewUserService()
 	crypto := crypto.NewCrypto()
 	token := token.NewTokenService()
 
-	authService := auth.NewAuthService(userRepository, crypto, token)
+	authRepository := auth.NewAuthRepository(database)
+
+	authService := auth.NewAuthService(authRepository, userService, crypto, token)
 
 	authHandler := handlers.NewAuthHandler(authService)
 
