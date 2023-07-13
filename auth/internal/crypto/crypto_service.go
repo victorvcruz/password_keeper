@@ -15,12 +15,14 @@ type CryptoServiceClient interface {
 }
 
 type cryptoService struct {
-	secret string
+	secret    string
+	secretApi string
 }
 
 func NewCrypto() CryptoServiceClient {
 	return &cryptoService{
-		secret: os.Getenv("CRYPTO_SECRET"),
+		secret:    os.Getenv("CRYPTO_SECRET"),
+		secretApi: os.Getenv("CRYPTO_SECRET_API"),
 	}
 }
 
@@ -38,6 +40,35 @@ func (a *cryptoService) Encrypt(text string) (string, error) {
 
 func (a *cryptoService) Decrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secret))
+	if err != nil {
+		return "", err
+	}
+
+	cipherText, err := base64.StdEncoding.DecodeString(text)
+	if err != nil {
+		return "", err
+	}
+
+	cfb := cipher.NewCFBDecrypter(block, bytes)
+	plainText := make([]byte, len(cipherText))
+	cfb.XORKeyStream(plainText, cipherText)
+	return string(plainText), nil
+}
+
+func (a *cryptoService) EncryptApi(text string) (string, error) {
+	block, err := aes.NewCipher([]byte(a.secretApi))
+	if err != nil {
+		return "", err
+	}
+	plainText := []byte(text)
+	cfb := cipher.NewCFBEncrypter(block, bytes)
+	cipherText := make([]byte, len(plainText))
+	cfb.XORKeyStream(cipherText, plainText)
+	return base64.StdEncoding.EncodeToString(cipherText), nil
+}
+
+func (a *cryptoService) DecryptApi(text string) (string, error) {
+	block, err := aes.NewCipher([]byte(a.secretApi))
 	if err != nil {
 		return "", err
 	}

@@ -4,12 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 	"os"
 	"strings"
 )
 
 type TokenServiceClient interface {
 	CreateTokenByID(id int64) (string, error)
+	CreateRandomToken() (string, error)
 	DecodeTokenReturnId(token string) (string, error)
 }
 
@@ -27,6 +29,20 @@ func (t *TokenService) CreateTokenByID(id int64) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id": id,
+	})
+
+	tokenString, err := token.SignedString([]byte(t.key))
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, err
+}
+
+func (t *TokenService) CreateRandomToken() (string, error) {
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id": uuid.New(),
 	})
 
 	tokenString, err := token.SignedString([]byte(t.key))

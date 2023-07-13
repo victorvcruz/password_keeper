@@ -12,6 +12,8 @@ import (
 	"log"
 )
 
+const Service = "AUTH"
+
 func init() {
 	err := godotenv.Load()
 	if err != nil {
@@ -20,7 +22,6 @@ func init() {
 }
 
 func main() {
-
 	database, err := dbmanager.NewDatabase().Connect()
 	if err != nil {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
@@ -33,6 +34,11 @@ func main() {
 	authRepository := auth.NewAuthRepository(database)
 
 	authService := auth.NewAuthService(authRepository, userService, crypto, token)
+
+	_, err = authService.RegisterService(&auth.Register{Service: Service})
+	if err != nil {
+		log.Fatalf("failed to register authorization service:%s", err.Error())
+	}
 
 	authHandler := handlers.NewAuthHandler(authService)
 

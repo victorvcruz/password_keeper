@@ -11,5 +11,5 @@ type UserDTO struct {
 	MasterPassword string    `json:"masterPassword,omitempty"`
 	CreatedAt      time.Time `json:"createdAt,omitempty"`
 	UpdatedAt      time.Time `json:"updatedAt,omitempty"`
-	DeletedAt      time.Time `son:"deletedAt,omitempty"`
+	DeletedAt      time.Time `json:"deletedAt,omitempty"`
 }

@@ -38,7 +38,7 @@ func NewUserService() UserServiceClient {
 }
 
 func (u *userService) UserByEmail(email string) (*UserDTO, error) {
-	md := metadata.New(map[string]string{"userEmail": email})
+	md := metadata.New(map[string]string{"userEmail": email, "api-token": "A"})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	user, err := u.client.FindUserByData(ctx, &pb2.Empty{})
 	if err != nil {

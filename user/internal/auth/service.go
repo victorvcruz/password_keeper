@@ -50,7 +50,7 @@ func (a authService) AuthUserToken(acessToken string) (int64, error) {
 }
 
 func (a authService) AuthServiceToken(acessToken string) error {
-	auth, err := a.client.AuthToken(a.ctx, &pb2.AuthTokenRequest{AcessToken: acessToken})
+	auth, err := a.client.AuthApi(a.ctx, &pb2.AuthTokenService{AcessToken: acessToken})
 	if err != nil {
 		return err
 	}

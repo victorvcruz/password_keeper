@@ -5,11 +5,16 @@ import (
 	"log"
 	"report.com/cmd/api"
 	"report.com/cmd/api/handlers"
+	"report.com/internal/auth"
 	dbmanager "report.com/internal/platform/database"
 	"report.com/internal/report"
+	"report.com/pkg/authorization"
 )
 
+const Service = "REPORT"
+
 func init() {
+	authorization.Setup(Service)
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -29,7 +34,7 @@ func main() {
 
 	reportHandler := handlers.NewReportHandler(reportService)
 
-	err = api.New(reportHandler)
+	err = api.New(reportHandler, auth.NewAuthService())
 	if err != nil {
 		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}

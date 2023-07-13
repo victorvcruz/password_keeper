@@ -11,9 +11,13 @@ import (
 	"user.com/internal/crypto"
 	dbmanager "user.com/internal/platform/database"
 	"user.com/internal/user"
+	"user.com/pkg/authorization"
 )
 
+const Service = "USER"
+
 func init() {
+	authorization.Setup(Service)
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -36,7 +40,7 @@ func main() {
 
 	userHandler := handlers.NewUserHandler(userService, authService, validate)
 
-	err = api.New(userHandler)
+	err = api.New(userHandler, authService)
 	if err != nil {
 		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}

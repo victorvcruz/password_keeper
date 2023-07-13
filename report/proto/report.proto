@@ -2,12 +2,12 @@ syntax = "proto3";
 
 option go_package = "./v1";
 
+import "google/protobuf/empty.proto";
+
 service User {
   rpc CreateReport (ReportRequest) returns (ReportResponse) {}
-  rpc ReportByUserId (Empty) returns (ListReportResponse) {}
+  rpc ReportByUserId (google.protobuf.Empty) returns (ListReportResponse) {}
 }
-
-message Empty {}
 
 message MessageResponse {
   string message = 1;
