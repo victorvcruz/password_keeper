@@ -13,8 +13,5 @@
 
 # Local directories
 .idea
-docker-compose.yml
-init.sql
 postgres_data
 redis_data
-.env
