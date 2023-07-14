@@ -1,6 +1,8 @@
 package report
 
-import "gorm.io/gorm"
+import (
+	"report.com/internal/platform/database"
+)
 
 type ReportRepositoryClient interface {
 	Create(report *Report) error
@@ -12,17 +14,17 @@ type ReportRepositoryClient interface {
 
 type reportRepository struct {
 	ReportRepositoryClient
-	db *gorm.DB
+	db database.DatabaseClient
 }
 
-func NewReportRepository(_db *gorm.DB) ReportRepositoryClient {
+func NewReportRepository(_db database.DatabaseClient) ReportRepositoryClient {
 	return &reportRepository{
 		db: _db,
 	}
 }
 
 func (r *reportRepository) Create(report *Report) error {
-	err := r.db.Create(report).Error
+	err := r.db.DB().Create(report).Error
 	if err != nil {
 		return err
 	}
@@ -31,7 +33,7 @@ func (r *reportRepository) Create(report *Report) error {
 }
 
 func (r *reportRepository) Update(report *Report) error {
-	err := r.db.Save(report).Error
+	err := r.db.DB().Save(report).Error
 	if err != nil {
 		return err
 	}
@@ -39,7 +41,7 @@ func (r *reportRepository) Update(report *Report) error {
 }
 
 func (r *reportRepository) Delete(report *Report) error {
-	err := r.db.Delete(report).Error
+	err := r.db.DB().Delete(report).Error
 	if err != nil {
 		return err
 	}
@@ -49,7 +51,7 @@ func (r *reportRepository) Delete(report *Report) error {
 func (r *reportRepository) FindByUserId(userId string) ([]Report, error) {
 	var reports []Report
 
-	err := r.db.Where("user_id = ? AND deleted_at is null", userId).Find(&reports).Error
+	err := r.db.DB().Where("user_id = ? AND deleted_at is null", userId).Find(&reports).Error
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +62,7 @@ func (r *reportRepository) FindByUserId(userId string) ([]Report, error) {
 func (r *reportRepository) FindByVaultId(vaultId string) ([]Report, error) {
 	var reports []Report
 
-	err := r.db.Where("vault_id = ? AND deleted_at is null", vaultId).Find(&reports).Error
+	err := r.db.DB().Where("vault_id = ? AND deleted_at is null", vaultId).Find(&reports).Error
 	if err != nil {
 		return nil, err
 	}

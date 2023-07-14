@@ -1,7 +1,7 @@
 package user
 
 import (
-	"gorm.io/gorm"
+	"user.com/internal/platform/database"
 )
 
 type UserRepositoryClient interface {
@@ -14,17 +14,17 @@ type UserRepositoryClient interface {
 }
 
 type userRepository struct {
-	db *gorm.DB
+	db database.DatabaseClient
 }
 
-func NewUserRepository(_db *gorm.DB) UserRepositoryClient {
+func NewUserRepository(_db database.DatabaseClient) UserRepositoryClient {
 	return &userRepository{
 		db: _db,
 	}
 }
 
 func (u *userRepository) Create(user *User) error {
-	err := u.db.Create(user).Error
+	err := u.db.DB().Create(user).Error
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (u *userRepository) Create(user *User) error {
 }
 
 func (u *userRepository) Update(user *User) error {
-	err := u.db.Save(user).Error
+	err := u.db.DB().Save(user).Error
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func (u *userRepository) Update(user *User) error {
 
 func (u *userRepository) ExistEmail(email string) bool {
 	var exists bool
-	u.db.Model(&User{}).
+	u.db.DB().Model(&User{}).
 		Select("count(*) > 0").
 		Where("email = ? AND deleted_at is null", email).
 		Find(&exists)
@@ -51,7 +51,7 @@ func (u *userRepository) ExistEmail(email string) bool {
 
 func (u *userRepository) FindById(id int64) (*User, error) {
 	var user User
-	err := u.db.Where("id = ? AND deleted_at is null", id).Find(&user).Error
+	err := u.db.DB().Where("id = ? AND deleted_at is null", id).Find(&user).Error
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (u *userRepository) FindById(id int64) (*User, error) {
 }
 
 func (u *userRepository) Delete(user *User) error {
-	err := u.db.Delete(user).Error
+	err := u.db.DB().Delete(user).Error
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (u *userRepository) Delete(user *User) error {
 
 func (u *userRepository) FindByData(id, name, email string) (*User, error) {
 	var user User
-	err := u.db.Where("id LIKE ? AND email LIKE ? AND name LIKE ? AND deleted_at is null",
+	err := u.db.DB().Where("id LIKE ? AND email LIKE ? AND name LIKE ? AND deleted_at is null",
 		"%"+id+"%", "%"+email+"%", "%"+name+"%").
 		Limit(1).
 		Find(&user).Error

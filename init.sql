@@ -61,26 +61,26 @@ CREATE TABLE IF NOT EXISTS auth_service.auth (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS auth_service.auth_service (
+CREATE TABLE IF NOT EXISTS auth_service.service (
     id BIGSERIAL UNIQUE NOT NULL,
-    service VARCHAR NOT NULL,
-    service_conn VARCHAR NOT NULL,
+    name VARCHAR NOT NULL,
     api_token VARCHAR NOT NULL,
-    token VARCHAR,
     created_at TIMESTAMP NOT NULL,
-    expired_at TIMESTAMP NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (service) REFERENCES auth_service.service(id),
-    FOREIGN KEY (service_conn) REFERENCES auth_service.service(id)
+    updated_at TIMESTAMP NOT NULL,
+    deleted_at TIMESTAMP NULL,
+    PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS auth_service.service (
+CREATE TABLE IF NOT EXISTS auth_service.auth_service (
      id BIGSERIAL UNIQUE NOT NULL,
-     name VARCHAR NOT NULL,
+     service BIGINT NOT NULL,
+     service_conn BIGINT NOT NULL,
      api_token VARCHAR NOT NULL,
+     token VARCHAR,
      created_at TIMESTAMP NOT NULL,
-     updated_at TIMESTAMP NOT NULL,
-     deleted_at TIMESTAMP NULL,
-    PRIMARY KEY (id)
+     expired_at TIMESTAMP NOT NULL,
+     PRIMARY KEY (id),
+     FOREIGN KEY (service) REFERENCES auth_service.service(id),
+     FOREIGN KEY (service_conn) REFERENCES auth_service.service(id)
 );
 

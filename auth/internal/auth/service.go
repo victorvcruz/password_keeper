@@ -2,6 +2,7 @@ package auth
 
 import (
 	"auth.com/internal/crypto"
+	"auth.com/internal/platform/database"
 	"auth.com/internal/token"
 	"auth.com/internal/user"
 	"auth.com/internal/utils/errors"
@@ -17,6 +18,7 @@ type AuthServiceClient interface {
 }
 
 type authService struct {
+	db          database.DatabaseClient
 	repository  AuthRepositoryClient
 	userService user.UserServiceClient
 	crypto      crypto.CryptoServiceClient
@@ -24,12 +26,14 @@ type authService struct {
 }
 
 func NewAuthService(
+	_db database.DatabaseClient,
 	_repository AuthRepositoryClient,
 	_userService user.UserServiceClient,
 	_crypto crypto.CryptoServiceClient,
 	_token token.TokenServiceClient,
 ) AuthServiceClient {
 	return &authService{
+		db:          _db,
 		repository:  _repository,
 		userService: _userService,
 		crypto:      _crypto,
@@ -62,6 +66,7 @@ func (a *authService) Login(login *LoginRequest) (string, error) {
 		return "", err
 	}
 
+	a.db.Begin()
 	nowTime := time.Now()
 	if authModel == nil {
 		authModel, err = a.repository.CreateUserAuth(&Auth{
@@ -74,8 +79,11 @@ func (a *authService) Login(login *LoginRequest) (string, error) {
 	authModel.ExpiredAt = nowTime.Add(time.Minute * 30)
 
 	if err = a.repository.UpdateToken(authModel); err != nil {
+		a.db.Rollback()
 		return "", err
 	}
+	a.db.Commit()
+
 	return authModel.Token, nil
 }
 
@@ -107,9 +115,11 @@ func (a *authService) LoginService(login *LoginServiceRequest) (string, error) {
 		return "", err
 	}
 
+	a.db.Begin()
+
 	nowTime := time.Now()
 	if authModel == nil {
-		authModel, err = a.repository.CreateServiceAuth(&AuthApi{
+		authModel, err = a.repository.CreateServiceAuth(&AuthService{
 			Service:     service.Id,
 			ServiceConn: serviceConn.Id,
 			ApiToken:    service.ApiToken,
@@ -120,14 +130,18 @@ func (a *authService) LoginService(login *LoginServiceRequest) (string, error) {
 
 	authModel.Token, err = a.token.CreateTokenByID(authModel.Id)
 	if err != nil {
+		a.db.Rollback()
 		return "", err
 	}
 
 	authModel.ExpiredAt = nowTime.Add(time.Minute * 30)
 
 	if err = a.repository.UpdateServiceToken(authModel); err != nil {
+		a.db.Rollback()
 		return "", err
 	}
+
+	a.db.Commit()
 
 	return authModel.Token, nil
 }

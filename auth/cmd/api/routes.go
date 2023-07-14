@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func New(user *handlers.AuthHandler) error {
+func New(auth *handlers.AuthHandler) error {
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("API_PORT")))
 	if err != nil {
@@ -17,7 +17,7 @@ func New(user *handlers.AuthHandler) error {
 	}
 
 	app := grpc.NewServer()
-	pb.RegisterAuthServer(app, user)
+	pb.RegisterAuthServer(app, auth)
 
 	err = app.Serve(listener)
 	if err != nil {

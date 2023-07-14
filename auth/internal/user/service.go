@@ -1,6 +1,7 @@
 package user
 
 import (
+	"auth.com/internal"
 	pb2 "auth.com/pkg/pb"
 	"context"
 	"google.golang.org/grpc"
@@ -10,6 +11,8 @@ import (
 	"os"
 	"strconv"
 )
+
+const UserService = "USER"
 
 type UserServiceClient interface {
 	UserById(id int64) (*UserDTO, error)
@@ -38,7 +41,12 @@ func NewUserService() UserServiceClient {
 }
 
 func (u *userService) UserByEmail(email string) (*UserDTO, error) {
-	md := metadata.New(map[string]string{"userEmail": email, "api-token": "A"})
+	apiToken, err := internal.Login(UserService)
+	if err != nil {
+		return nil, err
+	}
+
+	md := metadata.New(map[string]string{"userEmail": email, "api-token": apiToken})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	user, err := u.client.FindUserByData(ctx, &pb2.Empty{})
 	if err != nil {
@@ -49,7 +57,12 @@ func (u *userService) UserByEmail(email string) (*UserDTO, error) {
 }
 
 func (u *userService) UserById(id int64) (*UserDTO, error) {
-	md := metadata.New(map[string]string{"id": strconv.FormatInt(id, 10)})
+	apiToken, err := internal.Login(UserService)
+	if err != nil {
+		return nil, err
+	}
+
+	md := metadata.New(map[string]string{"id": strconv.FormatInt(id, 10), "api-token": apiToken})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	user, err := u.client.FindUserByData(ctx, &pb2.Empty{})
 	if err != nil {
