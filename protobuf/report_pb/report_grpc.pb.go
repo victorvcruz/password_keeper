@@ -4,10 +4,11 @@
 // - protoc             v3.12.4
 // source: report.proto
 
-package pb
+package report_pb
 
 import (
 	context "context"
+	"github.com/victorvcruz/password_warehouse/protobuf/user_pb"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -23,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
 	CreateReport(ctx context.Context, in *ReportRequest, opts ...grpc.CallOption) (*ReportResponse, error)
-	ReportByUserId(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListReportResponse, error)
+	ReportByUserId(ctx context.Context, in *user_pb.Empty, opts ...grpc.CallOption) (*ListReportResponse, error)
 }
 
 type userClient struct {
@@ -43,7 +44,7 @@ func (c *userClient) CreateReport(ctx context.Context, in *ReportRequest, opts .
 	return out, nil
 }
 
-func (c *userClient) ReportByUserId(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListReportResponse, error) {
+func (c *userClient) ReportByUserId(ctx context.Context, in *user_pb.Empty, opts ...grpc.CallOption) (*ListReportResponse, error) {
 	out := new(ListReportResponse)
 	err := c.cc.Invoke(ctx, "/User/ReportByUserId", in, out, opts...)
 	if err != nil {
@@ -57,7 +58,7 @@ func (c *userClient) ReportByUserId(ctx context.Context, in *Empty, opts ...grpc
 // for forward compatibility
 type UserServer interface {
 	CreateReport(context.Context, *ReportRequest) (*ReportResponse, error)
-	ReportByUserId(context.Context, *Empty) (*ListReportResponse, error)
+	ReportByUserId(context.Context, *user_pb.Empty) (*ListReportResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -68,7 +69,7 @@ type UnimplementedUserServer struct {
 func (UnimplementedUserServer) CreateReport(context.Context, *ReportRequest) (*ReportResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateReport not implemented")
 }
-func (UnimplementedUserServer) ReportByUserId(context.Context, *Empty) (*ListReportResponse, error) {
+func (UnimplementedUserServer) ReportByUserId(context.Context, *user_pb.Empty) (*ListReportResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReportByUserId not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
@@ -103,7 +104,7 @@ func _User_CreateReport_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _User_ReportByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(user_pb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,7 +116,7 @@ func _User_ReportByUserId_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/User/ReportByUserId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).ReportByUserId(ctx, req.(*Empty))
+		return srv.(UserServer).ReportByUserId(ctx, req.(*user_pb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -1,41 +1,50 @@
 package authorization
 
 import (
-	"auth.com/internal/auth"
+	pb2 "auth.com/pkg/pb"
+	"context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"os"
 )
 
 type AuthorizationClient interface {
 	Login(service string) (string, error)
 }
 
-type Authorization struct {
-	serviceName string
-	client      auth.AuthServiceClient
+type authService struct {
+	ctx         context.Context
 	apiToken    string
+	serviceName string
+	host        string
 }
 
-func NewAuthorization(service string, auth auth.AuthServiceClient) AuthorizationClient {
-	a := &Authorization{
-		serviceName: service,
-		client:      auth,
+func NewAuthorization(_service string) AuthorizationClient {
+	auth := authService{
+		host:        os.Getenv("AUTH_HOST"),
+		serviceName: _service,
+		ctx:         context.Background(),
 	}
-	a.apiToken = a.registerService()
-	return a
+	return &auth
 }
 
-func (a *Authorization) Login(service string) (string, error) {
-	auth, err := a.client.LoginService(&auth.LoginServiceRequest{Service: a.serviceName, ServiceConn: service, ApiToken: a.apiToken})
+func (a *authService) client() pb2.AuthClient {
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := grpc.Dial(a.host, opts...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return pb2.NewAuthClient(conn)
+}
+
+func (a *authService) Login(service string) (string, error) {
+	auth, err := a.client().LoginApi(a.ctx, &pb2.LoginService{Service: a.serviceName, ServiceConn: service, ApiToken: a.apiToken})
 	if err != nil {
 		return "", err
 	}
-	return auth, err
-}
-
-func (a *Authorization) registerService() string {
-	auth, err := a.client.RegisterService(&auth.Register{Service: a.serviceName})
-	if err != nil {
-		log.Fatalf("failed to register authorization service:%s", err.Error())
-	}
-	return auth
+	return auth.AcessToken, nil
 }

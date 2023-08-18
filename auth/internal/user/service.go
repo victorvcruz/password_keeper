@@ -1,7 +1,7 @@
 package user
 
 import (
-	"auth.com/internal"
+	"auth.com/internal/utils/authorization"
 	pb2 "auth.com/pkg/pb"
 	"context"
 	"google.golang.org/grpc"
@@ -20,11 +20,12 @@ type UserServiceClient interface {
 }
 
 type userService struct {
-	client pb2.UserClient
-	ctx    context.Context
+	client        pb2.UserClient
+	ctx           context.Context
+	authorization authorization.AuthorizationClient
 }
 
-func NewUserService() UserServiceClient {
+func NewUserService(_authorization authorization.AuthorizationClient) UserServiceClient {
 
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -35,13 +36,14 @@ func NewUserService() UserServiceClient {
 	}
 	_client := pb2.NewUserClient(conn)
 	return &userService{
-		client: _client,
-		ctx:    context.Background(),
+		client:        _client,
+		authorization: _authorization,
+		ctx:           context.Background(),
 	}
 }
 
 func (u *userService) UserByEmail(email string) (*UserDTO, error) {
-	apiToken, err := internal.Login(UserService)
+	apiToken, err := u.authorization.Login(UserService)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +59,7 @@ func (u *userService) UserByEmail(email string) (*UserDTO, error) {
 }
 
 func (u *userService) UserById(id int64) (*UserDTO, error) {
-	apiToken, err := internal.Login(UserService)
+	apiToken, err := u.authorization.Login(UserService)
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,8 @@ service Auth {
   rpc Login (LoginRequest) returns (LoginResponse) {}
   rpc AuthToken (AuthTokenRequest) returns (AuthTokenResponse) {}
   rpc LoginApi (LoginService) returns (LoginResponse) {}
-  rpc AuthApi (AuthTokenRequest) returns (AuthTokenResponse) {}
+  rpc AuthApi (AuthTokenService) returns (AuthTokenResponse) {}
+  rpc RegisterService (Register) returns (RegisterResponse){}
 }
 
 message LoginRequest {
@@ -16,7 +17,8 @@ message LoginRequest {
 
 message LoginService {
   string service = 1;
-  string apiToken = 2;
+  string serviceConn = 2;
+  string apiToken = 3;
 }
 
 message LoginResponse {
@@ -27,7 +29,21 @@ message AuthTokenRequest {
   string acessToken = 1;
 }
 
+message AuthTokenService {
+  string service = 1;
+  string serviceConn = 2;
+  string acessToken = 3;
+}
+
 message AuthTokenResponse {
   int64 id = 1;
   bool authorize= 2;
+}
+
+message Register {
+  string service = 1;
+}
+
+message RegisterResponse {
+  string apiToken = 1;
 }

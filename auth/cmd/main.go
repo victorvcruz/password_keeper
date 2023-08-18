@@ -28,7 +28,9 @@ func main() {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
 	}
 
-	userService := user.NewUserService()
+	authorization := authorization.NewAuthorization(Service)
+
+	userService := user.NewUserService(authorization)
 	crypto := crypto.NewCrypto()
 	token := token.NewTokenService()
 
@@ -36,7 +38,10 @@ func main() {
 
 	authService := auth.NewAuthService(database, authRepository, userService, crypto, token)
 
-	authorization := authorization.NewAuthorization(Service, authService)
+	_, err = authService.RegisterService(&auth.Register{Service: Service})
+	if err != nil {
+		log.Fatalf("Failed to register service %s", err.Error())
+	}
 
 	authHandler := handlers.NewAuthHandler(authService)
 

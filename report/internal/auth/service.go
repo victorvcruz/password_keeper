@@ -13,14 +13,17 @@ import (
 type AuthServiceClient interface {
 	AuthUserToken(acessToken string) (int64, error)
 	AuthServiceToken(acessToken string) error
+	Login(service string) (string, error)
 }
 
 type authService struct {
-	client pb2.AuthClient
-	ctx    context.Context
+	client      pb2.AuthClient
+	ctx         context.Context
+	apiToken    string
+	serviceName string
 }
 
-func NewAuthService() AuthServiceClient {
+func NewAuthService(_service string) AuthServiceClient {
 
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -29,14 +32,19 @@ func NewAuthService() AuthServiceClient {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_client := pb2.NewAuthClient(conn)
-	return &authService{
-		client: _client,
-		ctx:    context.Background(),
+
+	auth := authService{
+		serviceName: _service,
+		ctx:         context.Background(),
 	}
+
+	auth.client = pb2.NewAuthClient(conn)
+	auth.apiToken = auth.registerService()
+
+	return &auth
 }
 
-func (a authService) AuthUserToken(acessToken string) (int64, error) {
+func (a *authService) AuthUserToken(acessToken string) (int64, error) {
 	auth, err := a.client.AuthToken(a.ctx, &pb2.AuthTokenRequest{AcessToken: acessToken})
 	if err != nil {
 		return 0, err
@@ -49,7 +57,7 @@ func (a authService) AuthUserToken(acessToken string) (int64, error) {
 	return auth.Id, nil
 }
 
-func (a authService) AuthServiceToken(acessToken string) error {
+func (a *authService) AuthServiceToken(acessToken string) error {
 	auth, err := a.client.AuthApi(a.ctx, &pb2.AuthTokenService{AcessToken: acessToken})
 	if err != nil {
 		return err
@@ -60,4 +68,20 @@ func (a authService) AuthServiceToken(acessToken string) error {
 	}
 
 	return nil
+}
+
+func (a *authService) Login(service string) (string, error) {
+	auth, err := a.client.LoginApi(a.ctx, &pb2.LoginService{Service: a.serviceName, ServiceConn: service, ApiToken: a.apiToken})
+	if err != nil {
+		return "", err
+	}
+	return auth.AcessToken, nil
+}
+
+func (a *authService) registerService() string {
+	auth, err := a.client.RegisterService(a.ctx, &pb2.Register{Service: a.serviceName})
+	if err != nil {
+		log.Fatalf("failed to register authorization service:%s", err.Error())
+	}
+	return auth.ApiToken
 }
