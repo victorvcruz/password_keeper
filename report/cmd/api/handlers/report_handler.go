@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/victorvcruz/password_warehouse/protobuf/report_pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -10,7 +11,7 @@ import (
 )
 
 type ReportHandler struct {
-	report_pb.UnimplementedUserServer
+	report_pb.UnimplementedReportServer
 	reportService report.ReportServiceClient
 }
 
@@ -38,7 +39,7 @@ func (r *ReportHandler) CreateReport(ctx context.Context, req *report_pb.ReportR
 		VaultId: req.VaultId}, nil
 }
 
-func (r *ReportHandler) ReportByUserId(ctx context.Context, req *report_pb.Empty) (*report_pb.ListReportResponse, error) {
+func (r *ReportHandler) ReportByUserId(ctx context.Context, empty *empty.Empty) (*report_pb.ListReportResponse, error) {
 
 	userId, err := utils.GetMetadataByKey(ctx, "userId")
 	if err != nil {

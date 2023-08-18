@@ -3,15 +3,15 @@ module report.com
 go 1.18
 
 require (
+	github.com/golang/protobuf v1.5.3
 	github.com/joho/godotenv v1.4.0
-	github.com/victorvcruz/password_warehouse/protobuf v0.0.0-20230818133819-189479eb7b4f
+	github.com/victorvcruz/password_warehouse/protobuf v0.0.0-20230818141125-8519e6da5e72
 	google.golang.org/grpc v1.57.0
 	gorm.io/driver/postgres v1.4.6
 	gorm.io/gorm v1.24.3
 )
 
 require (
-	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.2.0 // indirect

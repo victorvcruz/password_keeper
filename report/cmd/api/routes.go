@@ -21,7 +21,7 @@ func New(report *handlers.ReportHandler, auth auth.AuthServiceClient) error {
 	app := grpc.NewServer(
 		grpc.UnaryInterceptor(middleware.NewInterceptor(auth).ServerInterceptor),
 	)
-	report_pb.RegisterUserServer(app, report)
+	report_pb.RegisterReportServer(app, report)
 
 	err = app.Serve(listener)
 	if err != nil {
