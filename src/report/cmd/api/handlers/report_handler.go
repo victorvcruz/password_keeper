@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/victorvcruz/password_warehouse/protobuf/report_pb"
+	"github.com/victorvcruz/password_warehouse/src/protobuf/report_pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"report.com/internal/report"
@@ -21,7 +21,7 @@ func NewReportHandler(_reportService report.ReportServiceClient) *ReportHandler 
 	}
 }
 
-func (r *ReportHandler) CreateReport(ctx context.Context, req *report_pb.ReportRequest) (*report_pb.ReportResponse, error) {
+func (r *ReportHandler) CreateReport(_ context.Context, req *report_pb.ReportRequest) (*report_pb.ReportResponse, error) {
 
 	report := report.ReportRequest{
 		Action:      req.Action,
@@ -39,7 +39,7 @@ func (r *ReportHandler) CreateReport(ctx context.Context, req *report_pb.ReportR
 		VaultId: req.VaultId}, nil
 }
 
-func (r *ReportHandler) ReportByUserId(ctx context.Context, empty *empty.Empty) (*report_pb.ListReportResponse, error) {
+func (r *ReportHandler) ReportByUserId(ctx context.Context, _ *empty.Empty) (*report_pb.ListReportResponse, error) {
 
 	userId, err := utils.GetMetadataByKey(ctx, "userId")
 	if err != nil {

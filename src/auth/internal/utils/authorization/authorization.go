@@ -2,7 +2,7 @@ package authorization
 
 import (
 	"context"
-	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
+	"github.com/victorvcruz/password_warehouse/src/protobuf/auth_pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"

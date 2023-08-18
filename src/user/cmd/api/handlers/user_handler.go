@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/go-playground/validator/v10"
-	"github.com/victorvcruz/password_warehouse/protobuf/user_pb"
+	"github.com/victorvcruz/password_warehouse/src/protobuf/user_pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -32,7 +32,7 @@ func NewUserHandler(
 	}
 }
 
-func (u *UserHandler) CreateUser(ctx context.Context, req *user_pb.UserRequest) (*user_pb.UserResponse, error) {
+func (u *UserHandler) CreateUser(_ context.Context, req *user_pb.UserRequest) (*user_pb.UserResponse, error) {
 
 	user := user.UserRequest{Name: req.Name, Email: req.Email, MasterPassword: req.MasterPassword}
 
@@ -54,7 +54,7 @@ func (u *UserHandler) CreateUser(ctx context.Context, req *user_pb.UserRequest) 
 	return &user_pb.UserResponse{Name: req.Name, Email: req.Email}, nil
 }
 
-func (u *UserHandler) FindUser(ctx context.Context, req *user_pb.Empty) (*user_pb.UserResponse, error) {
+func (u *UserHandler) FindUser(ctx context.Context, _ *user_pb.Empty) (*user_pb.UserResponse, error) {
 
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
@@ -100,7 +100,7 @@ func (u *UserHandler) UpdateUser(ctx context.Context, req *user_pb.UserRequest) 
 	return &user_pb.UserResponse{Name: req.Name, Email: req.Email}, nil
 }
 
-func (u *UserHandler) DeleteUser(ctx context.Context, req *user_pb.Empty) (*user_pb.MessageResponse, error) {
+func (u *UserHandler) DeleteUser(ctx context.Context, _ *user_pb.Empty) (*user_pb.MessageResponse, error) {
 
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
@@ -120,7 +120,7 @@ func (u *UserHandler) DeleteUser(ctx context.Context, req *user_pb.Empty) (*user
 	return &user_pb.MessageResponse{Message: "User deleted"}, nil
 }
 
-func (u *UserHandler) FindUserByData(ctx context.Context, req *user_pb.Empty) (*user_pb.DetailedUserResponse, error) {
+func (u *UserHandler) FindUserByData(ctx context.Context, _ *user_pb.Empty) (*user_pb.DetailedUserResponse, error) {
 
 	token, err := utils.BearerToken(ctx)
 	if err != nil {

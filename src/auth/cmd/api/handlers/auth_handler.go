@@ -5,7 +5,7 @@ import (
 	"auth.com/internal/auth"
 	"auth.com/internal/utils/errors"
 	"context"
-	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
+	"github.com/victorvcruz/password_warehouse/src/protobuf/auth_pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
