@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option go_package = "./v1";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service Vault {
+  rpc Find  (google.protobuf.Empty)       returns (VaultResponse) {}
+  rpc FindAll  (google.protobuf.Empty)       returns (AllVaultResponse) {}
+  rpc Create (VaultRequest)       returns (VaultResponse) {}
+  rpc Update (VaultRequest)       returns (VaultResponse) {}
+  rpc Delete (google.protobuf.Empty)       returns (VaultResponse) {}
+}
+
+message VaultResponse {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 folder_id = 3;
+  string username = 4;
+  string name = 5;
+  string password = 6;
+  string url = 7;
+  string notes = 8;
+  bool favorite = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message AllVaultResponse {
+  repeated VaultResponse vault_response = 1;
+}
+
+message VaultRequest {
+  string name = 1;
+  string folder_id = 2;
+  string username = 3;
+  string password = 4;
+  string url = 5;
+  string notes = 6;
+}

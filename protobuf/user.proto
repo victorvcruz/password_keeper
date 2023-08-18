@@ -2,16 +2,15 @@ syntax = "proto3";
 
 option go_package = "./v1";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 service User {
   rpc CreateUser (UserRequest) returns (UserResponse) {}
-  rpc FindUser   (Empty)       returns (UserResponse) {}
-  rpc FindUserByData (Empty)       returns (DetailedUserResponse) {}
+  rpc FindUser   (google.protobuf.Empty)       returns (UserResponse) {}
+  rpc FindUserByData (google.protobuf.Empty)       returns (DetailedUserResponse) {}
   rpc UpdateUser (UserRequest) returns (UserResponse) {}
-  rpc DeleteUser (Empty) returns (MessageResponse) {}
+  rpc DeleteUser (google.protobuf.Empty) returns (MessageResponse) {}
 }
-
-message Empty {}
 
 message UserRequest {
   string name = 1;

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS vault_service.vaults (
    password VARCHAR NOT NULL,
    url VARCHAR NOT NULL,
    notes VARCHAR NOT NULL,
-   favorite VARCHAR NOT NULL,
+   favorite bool NOT NULL,
    created_at TIMESTAMP NOT NULL,
    updated_at TIMESTAMP NOT NULL,
    deleted_at TIMESTAMP NULL,
