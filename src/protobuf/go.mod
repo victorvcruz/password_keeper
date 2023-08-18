@@ -1,4 +1,4 @@
-module github.com/victorvcruz/password_warehouse/protobuf
+module github.com/victorvcruz/password_warehouse/src/protobuf
 
 go 1.20
 
