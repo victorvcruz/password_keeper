@@ -7,20 +7,16 @@ import (
 	"net"
 	"os"
 	"user.com/cmd/api/handlers"
-	"user.com/internal/auth"
-	"user.com/pkg/middleware"
 )
 
-func New(user *handlers.UserHandler, auth auth.AuthServiceClient) error {
+func New(user *handlers.UserHandler) error {
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("API_PORT")))
 	if err != nil {
 		return err
 	}
 
-	app := grpc.NewServer(
-		grpc.UnaryInterceptor(middleware.NewInterceptor(auth).ServerInterceptor),
-	)
+	app := grpc.NewServer()
 	user_pb.RegisterUserServer(app, user)
 
 	err = app.Serve(listener)

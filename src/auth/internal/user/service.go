@@ -1,7 +1,6 @@
 package user
 
 import (
-	"auth.com/internal/utils/authorization"
 	"context"
 	"github.com/victorvcruz/password_warehouse/src/protobuf/user_pb"
 	"google.golang.org/grpc"
@@ -12,20 +11,17 @@ import (
 	"strconv"
 )
 
-const UserService = "USER"
-
 type UserServiceClient interface {
 	UserById(id int64) (*UserDTO, error)
 	UserByEmail(email string) (*UserDTO, error)
 }
 
 type userService struct {
-	client        user_pb.UserClient
-	ctx           context.Context
-	authorization authorization.AuthorizationClient
+	client user_pb.UserClient
+	ctx    context.Context
 }
 
-func NewUserService(_authorization authorization.AuthorizationClient) UserServiceClient {
+func NewUserService() UserServiceClient {
 
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -36,19 +32,13 @@ func NewUserService(_authorization authorization.AuthorizationClient) UserServic
 	}
 	_client := user_pb.NewUserClient(conn)
 	return &userService{
-		client:        _client,
-		authorization: _authorization,
-		ctx:           context.Background(),
+		client: _client,
+		ctx:    context.Background(),
 	}
 }
 
 func (u *userService) UserByEmail(email string) (*UserDTO, error) {
-	apiToken, err := u.authorization.Login(UserService)
-	if err != nil {
-		return nil, err
-	}
-
-	md := metadata.New(map[string]string{"userEmail": email, "api-token": apiToken})
+	md := metadata.New(map[string]string{"userEmail": email})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	user, err := u.client.FindUserByData(ctx, &user_pb.Empty{})
 	if err != nil {
@@ -59,12 +49,7 @@ func (u *userService) UserByEmail(email string) (*UserDTO, error) {
 }
 
 func (u *userService) UserById(id int64) (*UserDTO, error) {
-	apiToken, err := u.authorization.Login(UserService)
-	if err != nil {
-		return nil, err
-	}
-
-	md := metadata.New(map[string]string{"id": strconv.FormatInt(id, 10), "api-token": apiToken})
+	md := metadata.New(map[string]string{"id": strconv.FormatInt(id, 10)})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	user, err := u.client.FindUserByData(ctx, &user_pb.Empty{})
 	if err != nil {

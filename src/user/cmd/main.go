@@ -7,17 +7,13 @@ import (
 	"os"
 	"user.com/cmd/api"
 	"user.com/cmd/api/handlers"
-	auth "user.com/internal/auth"
+	"user.com/internal/auth"
 	"user.com/internal/crypto"
 	dbmanager "user.com/internal/platform/database"
 	"user.com/internal/user"
-	"user.com/pkg/authorization"
 )
 
-const Service = "USER"
-
 func init() {
-	authorization.Setup(Service)
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -31,7 +27,7 @@ func main() {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
 	}
 
-	authService := auth.NewAuthService(Service)
+	authService := auth.NewAuthService()
 
 	crypto := crypto.NewCrypto(os.Getenv("CRYPTO_SECRET"))
 	validate := validator.New()
@@ -40,7 +36,7 @@ func main() {
 
 	userHandler := handlers.NewUserHandler(userService, authService, validate)
 
-	err = api.New(userHandler, authService)
+	err = api.New(userHandler)
 	if err != nil {
 		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}

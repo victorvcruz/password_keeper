@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"log"
-	"report.com/cmd/api"
-	"report.com/cmd/api/handlers"
-	dbmanager "report.com/internal/platform/database"
-	"report.com/internal/report"
+	"vault.com/cmd/api"
+	"vault.com/cmd/api/handlers"
+	dbmanager "vault.com/internal/platform/database"
+	"vault.com/internal/vault"
 )
 
 func init() {
@@ -23,13 +23,13 @@ func main() {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
 	}
 
-	reportRepository := report.NewReportRepository(database)
+	vaultRepository := vault.NewVaultRepository(database)
 
-	reportService := report.NewReportService(reportRepository)
+	vaultService := vault.NewVaultService(database, vaultRepository)
 
-	reportHandler := handlers.NewReportHandler(reportService)
+	vaultHandler := handlers.NewVaultHandler(vaultService)
 
-	err = api.New(reportHandler)
+	err = api.New(vaultHandler)
 	if err != nil {
 		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}

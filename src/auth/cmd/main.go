@@ -8,12 +8,9 @@ import (
 	dbmanager "auth.com/internal/platform/database"
 	"auth.com/internal/token"
 	"auth.com/internal/user"
-	"auth.com/internal/utils/authorization"
 	"github.com/joho/godotenv"
 	"log"
 )
-
-const Service = "AUTH"
 
 func init() {
 	err := godotenv.Load()
@@ -28,20 +25,13 @@ func main() {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
 	}
 
-	authorization := authorization.NewAuthorization(Service)
-
-	userService := user.NewUserService(authorization)
+	userService := user.NewUserService()
 	crypto := crypto.NewCrypto()
 	token := token.NewTokenService()
 
 	authRepository := auth.NewAuthRepository(database)
 
 	authService := auth.NewAuthService(database, authRepository, userService, crypto, token)
-
-	_, err = authService.RegisterService(&auth.Register{Service: Service})
-	if err != nil {
-		log.Fatalf("Failed to register service %s", err.Error())
-	}
 
 	authHandler := handlers.NewAuthHandler(authService)
 
