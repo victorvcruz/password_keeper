@@ -2,16 +2,16 @@ package authorization
 
 import (
 	"context"
+	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"os"
-	pb2 "report.com/pkg/pb"
 )
 
 var (
 	serviceName string
-	client      pb2.AuthClient
+	client      auth_pb.AuthClient
 	apiToken    string
 )
 
@@ -22,14 +22,14 @@ func Setup(service string) {
 }
 
 func Login(service string) (string, error) {
-	auth, err := client.LoginApi(context.Background(), &pb2.LoginService{Service: serviceName, ServiceConn: service, ApiToken: apiToken})
+	auth, err := client.LoginApi(context.Background(), &auth_pb.LoginService{Service: serviceName, ServiceConn: service, ApiToken: apiToken})
 	if err != nil {
 		return "", err
 	}
 	return auth.AcessToken, err
 }
 
-func connectClient() pb2.AuthClient {
+func connectClient() auth_pb.AuthClient {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -37,11 +37,11 @@ func connectClient() pb2.AuthClient {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return pb2.NewAuthClient(conn)
+	return auth_pb.NewAuthClient(conn)
 }
 
 func registerService() string {
-	auth, err := client.RegisterService(context.Background(), &pb2.Register{Service: serviceName})
+	auth, err := client.RegisterService(context.Background(), &auth_pb.Register{Service: serviceName})
 	if err != nil {
 		log.Fatalf("failed to register authorization service:%s", err.Error())
 	}

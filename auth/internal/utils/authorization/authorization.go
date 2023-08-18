@@ -1,8 +1,8 @@
 package authorization
 
 import (
-	pb2 "auth.com/pkg/pb"
 	"context"
+	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -29,7 +29,7 @@ func NewAuthorization(_service string) AuthorizationClient {
 	return &auth
 }
 
-func (a *authService) client() pb2.AuthClient {
+func (a *authService) client() auth_pb.AuthClient {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -38,11 +38,11 @@ func (a *authService) client() pb2.AuthClient {
 		log.Fatal(err)
 	}
 
-	return pb2.NewAuthClient(conn)
+	return auth_pb.NewAuthClient(conn)
 }
 
 func (a *authService) Login(service string) (string, error) {
-	auth, err := a.client().LoginApi(a.ctx, &pb2.LoginService{Service: a.serviceName, ServiceConn: service, ApiToken: a.apiToken})
+	auth, err := a.client().LoginApi(a.ctx, &auth_pb.LoginService{Service: a.serviceName, ServiceConn: service, ApiToken: a.apiToken})
 	if err != nil {
 		return "", err
 	}

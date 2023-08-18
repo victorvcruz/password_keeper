@@ -31,7 +31,7 @@ func main() {
 		log.Fatalf("[CONNECT DATABASE FAIL]: %s", err.Error())
 	}
 
-	authService := auth.NewAuthService()
+	authService := auth.NewAuthService(Service)
 
 	crypto := crypto.NewCrypto(os.Getenv("CRYPTO_SECRET"))
 	validate := validator.New()

@@ -34,7 +34,7 @@ func main() {
 
 	reportHandler := handlers.NewReportHandler(reportService)
 
-	err = api.New(reportHandler, auth.NewAuthService())
+	err = api.New(reportHandler, auth.NewAuthService(Service))
 	if err != nil {
 		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}

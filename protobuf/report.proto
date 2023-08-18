@@ -4,7 +4,7 @@ option go_package = "./v1";
 
 import "google/protobuf/empty.proto";
 
-service User {
+service Report {
   rpc CreateReport (ReportRequest) returns (ReportResponse) {}
   rpc ReportByUserId (google.protobuf.Empty) returns (ListReportResponse) {}
 }

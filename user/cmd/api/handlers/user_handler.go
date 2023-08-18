@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/go-playground/validator/v10"
+	"github.com/victorvcruz/password_warehouse/protobuf/user_pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -10,11 +11,10 @@ import (
 	"user.com/internal/user"
 	"user.com/internal/utils"
 	"user.com/internal/utils/errors"
-	"user.com/pkg/pb"
 )
 
 type UserHandler struct {
-	pb.UnimplementedUserServer
+	user_pb.UnimplementedUserServer
 	userService user.UserServiceClient
 	authService auth.AuthServiceClient
 	validate    *validator.Validate
@@ -32,7 +32,7 @@ func NewUserHandler(
 	}
 }
 
-func (u *UserHandler) CreateUser(ctx context.Context, req *pb.UserRequest) (*pb.UserResponse, error) {
+func (u *UserHandler) CreateUser(ctx context.Context, req *user_pb.UserRequest) (*user_pb.UserResponse, error) {
 
 	user := user.UserRequest{Name: req.Name, Email: req.Email, MasterPassword: req.MasterPassword}
 
@@ -51,10 +51,10 @@ func (u *UserHandler) CreateUser(ctx context.Context, req *pb.UserRequest) (*pb.
 		}
 	}
 
-	return &pb.UserResponse{Name: req.Name, Email: req.Email}, nil
+	return &user_pb.UserResponse{Name: req.Name, Email: req.Email}, nil
 }
 
-func (u *UserHandler) FindUser(ctx context.Context, req *pb.Empty) (*pb.UserResponse, error) {
+func (u *UserHandler) FindUser(ctx context.Context, req *user_pb.Empty) (*user_pb.UserResponse, error) {
 
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
@@ -71,10 +71,10 @@ func (u *UserHandler) FindUser(ctx context.Context, req *pb.Empty) (*pb.UserResp
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
-	return &pb.UserResponse{Name: user.Name, Email: user.Email}, nil
+	return &user_pb.UserResponse{Name: user.Name, Email: user.Email}, nil
 }
 
-func (u *UserHandler) UpdateUser(ctx context.Context, req *pb.UserRequest) (*pb.UserResponse, error) {
+func (u *UserHandler) UpdateUser(ctx context.Context, req *user_pb.UserRequest) (*user_pb.UserResponse, error) {
 
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
@@ -97,10 +97,10 @@ func (u *UserHandler) UpdateUser(ctx context.Context, req *pb.UserRequest) (*pb.
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
-	return &pb.UserResponse{Name: req.Name, Email: req.Email}, nil
+	return &user_pb.UserResponse{Name: req.Name, Email: req.Email}, nil
 }
 
-func (u *UserHandler) DeleteUser(ctx context.Context, req *pb.Empty) (*pb.MessageResponse, error) {
+func (u *UserHandler) DeleteUser(ctx context.Context, req *user_pb.Empty) (*user_pb.MessageResponse, error) {
 
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
@@ -117,10 +117,10 @@ func (u *UserHandler) DeleteUser(ctx context.Context, req *pb.Empty) (*pb.Messag
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
-	return &pb.MessageResponse{Message: "User deleted"}, nil
+	return &user_pb.MessageResponse{Message: "User deleted"}, nil
 }
 
-func (u *UserHandler) FindUserByData(ctx context.Context, req *pb.Empty) (*pb.DetailedUserResponse, error) {
+func (u *UserHandler) FindUserByData(ctx context.Context, req *user_pb.Empty) (*user_pb.DetailedUserResponse, error) {
 
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
@@ -137,7 +137,7 @@ func (u *UserHandler) FindUserByData(ctx context.Context, req *pb.Empty) (*pb.De
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
-	return &pb.DetailedUserResponse{
+	return &user_pb.DetailedUserResponse{
 		Id: user.Id, Name: user.Name, Email: user.Email, MasterPassword: user.MasterPassword,
 		CreatedAt: timestamppb.New(user.CreatedAt), UpdatedAt: timestamppb.New(user.UpdatedAt),
 	}, nil

@@ -2,8 +2,8 @@ package api
 
 import (
 	"auth.com/cmd/api/handlers"
-	"auth.com/pkg/pb"
 	"fmt"
+	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
 	"google.golang.org/grpc"
 	"net"
 	"os"
@@ -17,7 +17,7 @@ func New(auth *handlers.AuthHandler) error {
 	}
 
 	app := grpc.NewServer()
-	pb.RegisterAuthServer(app, auth)
+	auth_pb.RegisterAuthServer(app, auth)
 
 	err = app.Serve(listener)
 	if err != nil {

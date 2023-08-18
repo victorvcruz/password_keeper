@@ -2,12 +2,12 @@ package auth
 
 import (
 	"context"
+	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"os"
 	"report.com/internal/utils/errors"
-	pb2 "report.com/pkg/pb"
 )
 
 type AuthServiceClient interface {
@@ -17,7 +17,7 @@ type AuthServiceClient interface {
 }
 
 type authService struct {
-	client      pb2.AuthClient
+	client      auth_pb.AuthClient
 	ctx         context.Context
 	apiToken    string
 	serviceName string
@@ -38,14 +38,14 @@ func NewAuthService(_service string) AuthServiceClient {
 		ctx:         context.Background(),
 	}
 
-	auth.client = pb2.NewAuthClient(conn)
+	auth.client = auth_pb.NewAuthClient(conn)
 	auth.apiToken = auth.registerService()
 
 	return &auth
 }
 
 func (a *authService) AuthUserToken(acessToken string) (int64, error) {
-	auth, err := a.client.AuthToken(a.ctx, &pb2.AuthTokenRequest{AcessToken: acessToken})
+	auth, err := a.client.AuthToken(a.ctx, &auth_pb.AuthTokenRequest{AcessToken: acessToken})
 	if err != nil {
 		return 0, err
 	}
@@ -58,7 +58,7 @@ func (a *authService) AuthUserToken(acessToken string) (int64, error) {
 }
 
 func (a *authService) AuthServiceToken(acessToken string) error {
-	auth, err := a.client.AuthApi(a.ctx, &pb2.AuthTokenService{AcessToken: acessToken})
+	auth, err := a.client.AuthApi(a.ctx, &auth_pb.AuthTokenService{AcessToken: acessToken})
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func (a *authService) AuthServiceToken(acessToken string) error {
 }
 
 func (a *authService) Login(service string) (string, error) {
-	auth, err := a.client.LoginApi(a.ctx, &pb2.LoginService{Service: a.serviceName, ServiceConn: service, ApiToken: a.apiToken})
+	auth, err := a.client.LoginApi(a.ctx, &auth_pb.LoginService{Service: a.serviceName, ServiceConn: service, ApiToken: a.apiToken})
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +79,7 @@ func (a *authService) Login(service string) (string, error) {
 }
 
 func (a *authService) registerService() string {
-	auth, err := a.client.RegisterService(a.ctx, &pb2.Register{Service: a.serviceName})
+	auth, err := a.client.RegisterService(a.ctx, &auth_pb.Register{Service: a.serviceName})
 	if err != nil {
 		log.Fatalf("failed to register authorization service:%s", err.Error())
 	}

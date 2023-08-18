@@ -2,15 +2,15 @@ package handlers
 
 import (
 	"context"
+	"github.com/victorvcruz/password_warehouse/protobuf/report_pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"report.com/internal/report"
 	"report.com/internal/utils"
-	"report.com/pkg/pb"
 )
 
 type ReportHandler struct {
-	pb.UnimplementedUserServer
+	report_pb.UnimplementedUserServer
 	reportService report.ReportServiceClient
 }
 
@@ -20,7 +20,7 @@ func NewReportHandler(_reportService report.ReportServiceClient) *ReportHandler 
 	}
 }
 
-func (r *ReportHandler) CreateReport(ctx context.Context, req *pb.ReportRequest) (*pb.ReportResponse, error) {
+func (r *ReportHandler) CreateReport(ctx context.Context, req *report_pb.ReportRequest) (*report_pb.ReportResponse, error) {
 
 	report := report.ReportRequest{
 		Action:      req.Action,
@@ -34,11 +34,11 @@ func (r *ReportHandler) CreateReport(ctx context.Context, req *pb.ReportRequest)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &pb.ReportResponse{Action: req.Action, Description: req.Description, UserId: req.UserId,
+	return &report_pb.ReportResponse{Action: req.Action, Description: req.Description, UserId: req.UserId,
 		VaultId: req.VaultId}, nil
 }
 
-func (r *ReportHandler) ReportByUserId(ctx context.Context, req *pb.Empty) (*pb.ListReportResponse, error) {
+func (r *ReportHandler) ReportByUserId(ctx context.Context, req *report_pb.Empty) (*report_pb.ListReportResponse, error) {
 
 	userId, err := utils.GetMetadataByKey(ctx, "userId")
 	if err != nil {
@@ -50,9 +50,9 @@ func (r *ReportHandler) ReportByUserId(ctx context.Context, req *pb.Empty) (*pb.
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	var listReport pb.ListReportResponse
+	var listReport report_pb.ListReportResponse
 	for _, report := range reports {
-		listReport.Reports = append(listReport.Reports, &pb.ReportResponse{
+		listReport.Reports = append(listReport.Reports, &report_pb.ReportResponse{
 			Action:      report.Action,
 			Description: report.Description,
 			UserId:      report.UserId,

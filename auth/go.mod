@@ -4,16 +4,17 @@ go 1.18
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.4.3
-	github.com/golang/protobuf v1.5.2
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
-	google.golang.org/grpc v1.51.0
-	google.golang.org/protobuf v1.28.1
+	github.com/victorvcruz/password_warehouse/protobuf v0.0.0-20230818133819-189479eb7b4f
+	google.golang.org/grpc v1.57.0
+	google.golang.org/protobuf v1.31.0
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.2
 )
 
 require (
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
@@ -25,8 +26,8 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.4.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
-	google.golang.org/genproto v0.0.0-20221207170731-23e4bf6bdc37 // indirect
+	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230525234030-28d5490b6b19 // indirect
 )

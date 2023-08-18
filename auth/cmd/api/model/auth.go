@@ -2,13 +2,13 @@ package model
 
 import (
 	"auth.com/internal/auth"
-	pb "auth.com/pkg/pb"
 	"encoding/json"
+	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
 	"google.golang.org/protobuf/encoding/protojson"
 	"log"
 )
 
-func LoginFromProto(proto *pb.LoginRequest) *auth.LoginRequest {
+func LoginFromProto(proto *auth_pb.LoginRequest) *auth.LoginRequest {
 	bytes, err := protojson.MarshalOptions{UseProtoNames: true, UseEnumNumbers: false}.Marshal(proto)
 	if err != nil {
 		log.Printf("error when marshal to json %s", err.Error())
@@ -25,7 +25,7 @@ func LoginFromProto(proto *pb.LoginRequest) *auth.LoginRequest {
 	return &login
 }
 
-func LoginServiceFromProto(proto *pb.LoginService) *auth.LoginServiceRequest {
+func LoginServiceFromProto(proto *auth_pb.LoginService) *auth.LoginServiceRequest {
 	bytes, err := protojson.MarshalOptions{UseProtoNames: true, UseEnumNumbers: false}.Marshal(proto)
 	if err != nil {
 		log.Printf("error when marshal to json %s", err.Error())
@@ -42,7 +42,7 @@ func LoginServiceFromProto(proto *pb.LoginService) *auth.LoginServiceRequest {
 	return &login
 }
 
-func AuthFromProto(proto *pb.AuthTokenRequest) *auth.AuthTokenRequest {
+func AuthFromProto(proto *auth_pb.AuthTokenRequest) *auth.AuthTokenRequest {
 	bytes, err := protojson.MarshalOptions{UseProtoNames: true, UseEnumNumbers: false}.Marshal(proto)
 	if err != nil {
 		log.Printf("error when marshal to json %s", err.Error())
@@ -59,7 +59,7 @@ func AuthFromProto(proto *pb.AuthTokenRequest) *auth.AuthTokenRequest {
 	return &auth
 }
 
-func AuthServiceFromProto(proto *pb.AuthTokenService) *auth.AuthTokenService {
+func AuthServiceFromProto(proto *auth_pb.AuthTokenService) *auth.AuthTokenService {
 	bytes, err := protojson.MarshalOptions{UseProtoNames: true, UseEnumNumbers: false}.Marshal(proto)
 	if err != nil {
 		log.Printf("error when marshal to json %s", err.Error())
@@ -76,7 +76,7 @@ func AuthServiceFromProto(proto *pb.AuthTokenService) *auth.AuthTokenService {
 	return &auth
 }
 
-func RegisterFromProto(proto *pb.Register) *auth.Register {
+func RegisterFromProto(proto *auth_pb.Register) *auth.Register {
 	bytes, err := protojson.MarshalOptions{UseProtoNames: true, UseEnumNumbers: false}.Marshal(proto)
 	if err != nil {
 		log.Printf("error when marshal to json %s", err.Error())

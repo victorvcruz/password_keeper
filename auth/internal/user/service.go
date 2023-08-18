@@ -2,8 +2,8 @@ package user
 
 import (
 	"auth.com/internal/utils/authorization"
-	pb2 "auth.com/pkg/pb"
 	"context"
+	"github.com/victorvcruz/password_warehouse/protobuf/user_pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -20,7 +20,7 @@ type UserServiceClient interface {
 }
 
 type userService struct {
-	client        pb2.UserClient
+	client        user_pb.UserClient
 	ctx           context.Context
 	authorization authorization.AuthorizationClient
 }
@@ -34,7 +34,7 @@ func NewUserService(_authorization authorization.AuthorizationClient) UserServic
 	if err != nil {
 		log.Fatal(err)
 	}
-	_client := pb2.NewUserClient(conn)
+	_client := user_pb.NewUserClient(conn)
 	return &userService{
 		client:        _client,
 		authorization: _authorization,
@@ -50,7 +50,7 @@ func (u *userService) UserByEmail(email string) (*UserDTO, error) {
 
 	md := metadata.New(map[string]string{"userEmail": email, "api-token": apiToken})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	user, err := u.client.FindUserByData(ctx, &pb2.Empty{})
+	user, err := u.client.FindUserByData(ctx, &user_pb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (u *userService) UserById(id int64) (*UserDTO, error) {
 
 	md := metadata.New(map[string]string{"id": strconv.FormatInt(id, 10), "api-token": apiToken})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	user, err := u.client.FindUserByData(ctx, &pb2.Empty{})
+	user, err := u.client.FindUserByData(ctx, &user_pb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (u *userService) UserById(id int64) (*UserDTO, error) {
 	return u.userResponseToDto(user), nil
 }
 
-func (u *userService) userResponseToDto(response *pb2.DetailedUserResponse) *UserDTO {
+func (u *userService) userResponseToDto(response *user_pb.DetailedUserResponse) *UserDTO {
 	return &UserDTO{
 		Id:             response.Id,
 		Name:           response.Name,
