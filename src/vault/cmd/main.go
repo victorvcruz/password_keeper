@@ -5,6 +5,8 @@ import (
 	"log"
 	"vault.com/cmd/api"
 	"vault.com/cmd/api/handlers"
+	"vault.com/internal/auth"
+	"vault.com/internal/folder"
 	dbmanager "vault.com/internal/platform/database"
 	"vault.com/internal/vault"
 )
@@ -27,7 +29,13 @@ func main() {
 
 	vaultService := vault.NewVaultService(database, vaultRepository)
 
-	vaultHandler := handlers.NewVaultHandler(vaultService)
+	folderRepository := folder.NewFolderRepository(database)
+
+	folderService := folder.NewFolderService(database, folderRepository)
+
+	authService := auth.NewAuthService()
+
+	vaultHandler := handlers.NewVaultHandler(vaultService, folderService, authService)
 
 	err = api.New(vaultHandler)
 	if err != nil {

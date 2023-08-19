@@ -9,13 +9,13 @@ service Vault {
   rpc FindAll  (google.protobuf.Empty)       returns (AllVaultResponse) {}
   rpc Create (VaultRequest)       returns (VaultResponse) {}
   rpc Update (VaultRequest)       returns (VaultResponse) {}
-  rpc Delete (google.protobuf.Empty)       returns (VaultResponse) {}
+  rpc Delete (google.protobuf.Empty)       returns (google.protobuf.Empty) {}
 }
 
 message VaultResponse {
-  int64 id = 1;
-  int64 user_id = 2;
-  int64 folder_id = 3;
+  uint64 id = 1;
+  uint64 user_id = 2;
+  uint64 folder_id = 3;
   string username = 4;
   string name = 5;
   string password = 6;
@@ -32,9 +32,36 @@ message AllVaultResponse {
 
 message VaultRequest {
   string name = 1;
-  string folder_id = 2;
+  uint64 folder_id = 2;
   string username = 3;
   string password = 4;
   string url = 5;
   string notes = 6;
+  bool favorite = 7;
 }
+
+service Folder {
+  rpc Find  (google.protobuf.Empty)       returns (FolderResponse) {}
+  rpc FindAll  (google.protobuf.Empty)       returns (AllFolderResponse) {}
+  rpc Create (FolderRequest)       returns (FolderResponse) {}
+  rpc Update (FolderRequest)       returns (FolderResponse) {}
+  rpc Delete (google.protobuf.Empty)       returns (google.protobuf.Empty) {}
+}
+
+message FolderRequest {
+  string user_id = 1;
+  string name = 2;
+}
+
+message FolderResponse {
+ uint64 id = 1;
+ uint64 user_id = 2;
+ string name = 3;
+ google.protobuf.Timestamp created_at = 4;
+ google.protobuf.Timestamp updated_at = 5;
+}
+
+message AllFolderResponse {
+  repeated FolderResponse folder_response = 1;
+}
+

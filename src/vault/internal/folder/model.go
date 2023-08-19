@@ -14,6 +14,27 @@ type Folder struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-func (Folder) TableName() string {
+func (*Folder) TableName() string {
 	return "folders"
+}
+
+func (f *Folder) BeforeCreate(_ *gorm.DB) (err error) {
+	f.CreatedAt = time.Now()
+	f.UpdatedAt = time.Now()
+	return nil
+}
+
+func (f *Folder) BeforeUpdate(_ *gorm.DB) (err error) {
+	f.UpdatedAt = time.Now()
+	return nil
+}
+
+func (f *Folder) ToResponse() Response {
+	return Response{
+		ID:        f.ID,
+		UserID:    f.UserID,
+		Name:      f.Name,
+		CreatedAt: f.CreatedAt,
+		UpdatedAt: f.UpdatedAt,
+	}
 }

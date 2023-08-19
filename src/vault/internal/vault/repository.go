@@ -8,6 +8,7 @@ type RepositoryClient interface {
 	Delete(id uint) error
 	FindByID(id uint) (*Vault, error)
 	FindAllByUserID(userID uint) ([]Vault, error)
+	FindAllByFolderID(folderID uint) ([]Vault, error)
 }
 
 type repository struct {
@@ -49,6 +50,14 @@ func (r *repository) FindByID(id uint) (*Vault, error) {
 func (r *repository) FindAllByUserID(userID uint) ([]Vault, error) {
 	var vaults []Vault
 	if err := r.db.DB().Where("user_id = ?", userID).Find(&vaults).Error; err != nil {
+		return nil, err
+	}
+	return vaults, nil
+}
+
+func (r *repository) FindAllByFolderID(folderID uint) ([]Vault, error) {
+	var vaults []Vault
+	if err := r.db.DB().Where("folder_id = ?", folderID).Find(&vaults).Error; err != nil {
 		return nil, err
 	}
 	return vaults, nil

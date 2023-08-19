@@ -8,9 +8,10 @@ import (
 type ServiceClient interface {
 	Find(id uint) (Response, error)
 	FindAll(userId uint) ([]Response, error)
-	Create(req *Request) (Response, error)
-	Update(req *Request) (Response, error)
+	Create(req Request) (Response, error)
+	Update(req Request) (Response, error)
 	Delete(id uint) error
+	FindAllByFolder(folderId uint) ([]Response, error)
 }
 
 type service struct {
@@ -47,7 +48,7 @@ func (s service) FindAll(userId uint) ([]Response, error) {
 	return response, nil
 }
 
-func (s service) Create(req *Request) (Response, error) {
+func (s service) Create(req Request) (Response, error) {
 	vault, err := s.repository.Create(req.ToModel())
 	if err != nil {
 		return Response{}, err
@@ -55,7 +56,7 @@ func (s service) Create(req *Request) (Response, error) {
 	return vault.ToResponse(), nil
 }
 
-func (s service) Update(req *Request) (Response, error) {
+func (s service) Update(req Request) (Response, error) {
 	vault, err := s.repository.Update(req.ToModel())
 	if err != nil {
 		return Response{}, err
@@ -69,6 +70,23 @@ func (s service) Delete(id uint) error {
 		return err
 	}
 	return nil
+}
+
+func (s service) FindAllByFolder(folderId uint) ([]Response, error) {
+	vaults, err := s.repository.FindAllByFolderID(folderId)
+	if err != nil {
+		return nil, err
+	}
+
+	if vaults == nil {
+		return nil, &errors.NotFound{Msg: "not found vaults"}
+	}
+
+	response := make([]Response, len(vaults))
+	for i := range vaults {
+		response[i] = vaults[i].ToResponse()
+	}
+	return response, nil
 }
 
 func NewVaultService(
