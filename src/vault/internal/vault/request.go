@@ -2,8 +2,8 @@ package vault
 
 type Request struct {
 	Name     string `json:"name"`
-	UserID   uint   `json:"user_id"`
-	FolderID uint   `json:"folder_id"`
+	UserID   uint64 `json:"user_id"`
+	FolderID uint64 `json:"folder_id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	URL      string `json:"url"`

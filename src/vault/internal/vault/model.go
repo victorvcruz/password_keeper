@@ -6,9 +6,9 @@ import (
 )
 
 type Vault struct {
-	ID        uint `gorm:"primaryKey"`
-	UserID    uint
-	FolderID  uint
+	ID        uint64 `gorm:"primaryKey"`
+	UserID    uint64
+	FolderID  uint64
 	Username  string
 	Name      string
 	Password  string

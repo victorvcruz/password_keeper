@@ -5,9 +5,9 @@ import (
 )
 
 type Response struct {
-	ID        uint       `json:"id"`
-	UserID    uint       `json:"user_id"`
-	FolderID  uint       `json:"folder_id"`
+	ID        uint64     `json:"id"`
+	UserID    uint64     `json:"user_id"`
+	FolderID  uint64     `json:"folder_id"`
 	Username  string     `json:"username"`
 	Name      string     `json:"name"`
 	Password  string     `json:"password"`
