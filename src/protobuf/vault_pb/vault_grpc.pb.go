@@ -35,7 +35,7 @@ type VaultClient interface {
 	FindAll(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*AllVaultResponse, error)
 	Create(ctx context.Context, in *VaultRequest, opts ...grpc.CallOption) (*VaultResponse, error)
 	Update(ctx context.Context, in *VaultRequest, opts ...grpc.CallOption) (*VaultResponse, error)
-	Delete(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*VaultResponse, error)
+	Delete(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type vaultClient struct {
@@ -82,8 +82,8 @@ func (c *vaultClient) Update(ctx context.Context, in *VaultRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *vaultClient) Delete(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*VaultResponse, error) {
-	out := new(VaultResponse)
+func (c *vaultClient) Delete(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, Vault_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ type VaultServer interface {
 	FindAll(context.Context, *empty.Empty) (*AllVaultResponse, error)
 	Create(context.Context, *VaultRequest) (*VaultResponse, error)
 	Update(context.Context, *VaultRequest) (*VaultResponse, error)
-	Delete(context.Context, *empty.Empty) (*VaultResponse, error)
+	Delete(context.Context, *empty.Empty) (*empty.Empty, error)
 	mustEmbedUnimplementedVaultServer()
 }
 
@@ -119,7 +119,7 @@ func (UnimplementedVaultServer) Create(context.Context, *VaultRequest) (*VaultRe
 func (UnimplementedVaultServer) Update(context.Context, *VaultRequest) (*VaultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedVaultServer) Delete(context.Context, *empty.Empty) (*VaultResponse, error) {
+func (UnimplementedVaultServer) Delete(context.Context, *empty.Empty) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedVaultServer) mustEmbedUnimplementedVaultServer() {}
@@ -251,6 +251,244 @@ var Vault_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _Vault_Delete_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vault.proto",
+}
+
+const (
+	Folder_Find_FullMethodName    = "/Folder/Find"
+	Folder_FindAll_FullMethodName = "/Folder/FindAll"
+	Folder_Create_FullMethodName  = "/Folder/Create"
+	Folder_Update_FullMethodName  = "/Folder/Update"
+	Folder_Delete_FullMethodName  = "/Folder/Delete"
+)
+
+// FolderClient is the client API for Folder service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type FolderClient interface {
+	Find(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FolderResponse, error)
+	FindAll(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*AllFolderResponse, error)
+	Create(ctx context.Context, in *FolderRequest, opts ...grpc.CallOption) (*FolderResponse, error)
+	Update(ctx context.Context, in *FolderRequest, opts ...grpc.CallOption) (*FolderResponse, error)
+	Delete(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
+}
+
+type folderClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewFolderClient(cc grpc.ClientConnInterface) FolderClient {
+	return &folderClient{cc}
+}
+
+func (c *folderClient) Find(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FolderResponse, error) {
+	out := new(FolderResponse)
+	err := c.cc.Invoke(ctx, Folder_Find_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *folderClient) FindAll(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*AllFolderResponse, error) {
+	out := new(AllFolderResponse)
+	err := c.cc.Invoke(ctx, Folder_FindAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *folderClient) Create(ctx context.Context, in *FolderRequest, opts ...grpc.CallOption) (*FolderResponse, error) {
+	out := new(FolderResponse)
+	err := c.cc.Invoke(ctx, Folder_Create_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *folderClient) Update(ctx context.Context, in *FolderRequest, opts ...grpc.CallOption) (*FolderResponse, error) {
+	out := new(FolderResponse)
+	err := c.cc.Invoke(ctx, Folder_Update_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *folderClient) Delete(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Folder_Delete_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// FolderServer is the server API for Folder service.
+// All implementations must embed UnimplementedFolderServer
+// for forward compatibility
+type FolderServer interface {
+	Find(context.Context, *empty.Empty) (*FolderResponse, error)
+	FindAll(context.Context, *empty.Empty) (*AllFolderResponse, error)
+	Create(context.Context, *FolderRequest) (*FolderResponse, error)
+	Update(context.Context, *FolderRequest) (*FolderResponse, error)
+	Delete(context.Context, *empty.Empty) (*empty.Empty, error)
+	mustEmbedUnimplementedFolderServer()
+}
+
+// UnimplementedFolderServer must be embedded to have forward compatible implementations.
+type UnimplementedFolderServer struct {
+}
+
+func (UnimplementedFolderServer) Find(context.Context, *empty.Empty) (*FolderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Find not implemented")
+}
+func (UnimplementedFolderServer) FindAll(context.Context, *empty.Empty) (*AllFolderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAll not implemented")
+}
+func (UnimplementedFolderServer) Create(context.Context, *FolderRequest) (*FolderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedFolderServer) Update(context.Context, *FolderRequest) (*FolderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedFolderServer) Delete(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedFolderServer) mustEmbedUnimplementedFolderServer() {}
+
+// UnsafeFolderServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FolderServer will
+// result in compilation errors.
+type UnsafeFolderServer interface {
+	mustEmbedUnimplementedFolderServer()
+}
+
+func RegisterFolderServer(s grpc.ServiceRegistrar, srv FolderServer) {
+	s.RegisterService(&Folder_ServiceDesc, srv)
+}
+
+func _Folder_Find_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FolderServer).Find(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Folder_Find_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FolderServer).Find(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Folder_FindAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FolderServer).FindAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Folder_FindAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FolderServer).FindAll(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Folder_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FolderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FolderServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Folder_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FolderServer).Create(ctx, req.(*FolderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Folder_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FolderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FolderServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Folder_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FolderServer).Update(ctx, req.(*FolderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Folder_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FolderServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Folder_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FolderServer).Delete(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Folder_ServiceDesc is the grpc.ServiceDesc for Folder service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Folder_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "Folder",
+	HandlerType: (*FolderServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Find",
+			Handler:    _Folder_Find_Handler,
+		},
+		{
+			MethodName: "FindAll",
+			Handler:    _Folder_FindAll_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _Folder_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Folder_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Folder_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
