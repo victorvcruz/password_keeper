@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/golang/protobuf v1.5.3
 	github.com/joho/godotenv v1.5.1
-	github.com/victorvcruz/password_warehouse/src/protobuf v0.0.0-20230819200212-76fcd13e124f
+	github.com/victorvcruz/password_warehouse/src/protobuf v0.0.0-20230820112345-af8ed21ce737
 	google.golang.org/grpc v1.57.0
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.3

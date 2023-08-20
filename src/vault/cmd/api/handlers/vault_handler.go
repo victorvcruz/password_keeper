@@ -99,7 +99,7 @@ func (a *VaultHandler) Create(ctx context.Context, req *vault_pb.VaultRequest) (
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	vault, err := a.vaultService.Create(model.ProtoToVaultRequest(req, uint(id)))
+	vault, err := a.vaultService.Create(model.ProtoToVaultRequest(req, uint64(id)))
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
@@ -117,7 +117,7 @@ func (a *VaultHandler) Update(ctx context.Context, req *vault_pb.VaultRequest) (
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	vault, err := a.vaultService.Update(model.ProtoToVaultRequest(req, uint(id)))
+	vault, err := a.vaultService.Update(model.ProtoToVaultRequest(req, uint64(id)))
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}

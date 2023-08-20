@@ -8,9 +8,9 @@ import (
 
 func VaultResponseToProto(resp vault.Response) *vault_pb.VaultResponse {
 	return &vault_pb.VaultResponse{
-		Id:        int64(resp.ID),
-		UserId:    int64(resp.UserID),
-		FolderId:  int64(resp.FolderID),
+		Id:        resp.ID,
+		UserId:    resp.UserID,
+		FolderId:  resp.FolderID,
 		Username:  resp.Username,
 		Name:      resp.Name,
 		Password:  resp.Password,
@@ -22,7 +22,7 @@ func VaultResponseToProto(resp vault.Response) *vault_pb.VaultResponse {
 	}
 }
 
-func ProtoToVaultRequest(req *vault_pb.VaultRequest, userId uint) vault.Request {
+func ProtoToVaultRequest(req *vault_pb.VaultRequest, userId uint64) vault.Request {
 	return vault.Request{
 		Name:     req.Name,
 		UserID:   userId,
