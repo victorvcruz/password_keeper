@@ -1,7 +1,7 @@
 package folder
 
 type Request struct {
-	UserID int64
+	UserID uint64
 	Name   string
 }
 

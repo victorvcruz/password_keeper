@@ -9,12 +9,11 @@ import (
 	"os"
 )
 
-type DatabaseClient interface {
-	Connect() (DatabaseClient, error)
+type Client interface {
 	DB() *gorm.DB
-	Begin() DatabaseClient
-	Rollback() DatabaseClient
-	Commit() DatabaseClient
+	Begin() (*gorm.DB, error)
+	CommitOrRollback(tx *gorm.DB, err error) error
+	Connect() (Client, error)
 }
 
 type database struct {
@@ -29,7 +28,7 @@ type database struct {
 	db        *gorm.DB
 }
 
-func NewDatabase() DatabaseClient {
+func NewDatabase() Client {
 	return &database{
 		localhost: os.Getenv("POSTGRES_HOST"),
 		user:      os.Getenv("POSTGRES_USER"),
@@ -46,22 +45,26 @@ func (d *database) DB() *gorm.DB {
 	return d.db
 }
 
-func (d *database) Begin() DatabaseClient {
-	d.db = d.db.Begin()
-	return d
+func (d *database) Begin() (*gorm.DB, error) {
+	tx := d.db.Begin()
+	return tx, tx.Error
 }
 
-func (d *database) Rollback() DatabaseClient {
-	d.db = d.db.Rollback()
-	return d
+func (d *database) CommitOrRollback(tx *gorm.DB, err error) error {
+	if tx == nil {
+		return fmt.Errorf("no transaction to commit")
+	}
+
+	if err != nil {
+		if err = tx.Rollback().Error; err != nil {
+			return err
+		}
+		return err
+	}
+	return tx.Commit().Error
 }
 
-func (d *database) Commit() DatabaseClient {
-	d.db = d.db.Commit()
-	return d
-}
-
-func (d *database) Connect() (DatabaseClient, error) {
+func (d *database) Connect() (Client, error) {
 
 	postgresDSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
 		d.localhost, d.user, d.password, d.dbname, d.port, d.sslmode, d.timeZone)

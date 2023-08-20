@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/victorvcruz/password_warehouse/src/protobuf/vault_pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"vault.com/internal/folder"
 	"vault.com/internal/vault"
 )
 
@@ -32,5 +33,22 @@ func ProtoToVaultRequest(req *vault_pb.VaultRequest, userId uint64) vault.Reques
 		URL:      req.Url,
 		Notes:    req.Notes,
 		Favorite: req.Favorite,
+	}
+}
+
+func FolderResponseToProto(resp folder.Response) *vault_pb.FolderResponse {
+	return &vault_pb.FolderResponse{
+		Id:        resp.ID,
+		UserId:    resp.UserID,
+		Name:      resp.Name,
+		CreatedAt: timestamppb.New(resp.CreatedAt),
+		UpdatedAt: timestamppb.New(resp.UpdatedAt),
+	}
+}
+
+func ProtoToFolderRequest(req *vault_pb.FolderRequest, userId uint64) folder.Request {
+	return folder.Request{
+		Name:   req.Name,
+		UserID: userId,
 	}
 }

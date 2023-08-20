@@ -6,8 +6,8 @@ import (
 )
 
 type Folder struct {
-	ID        uint `gorm:"primaryKey"`
-	UserID    int64
+	ID        uint64 `gorm:"primaryKey"`
+	UserID    uint64
 	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time

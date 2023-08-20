@@ -5,11 +5,11 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service Vault {
-  rpc Find  (google.protobuf.Empty)       returns (VaultResponse) {}
-  rpc FindAll  (google.protobuf.Empty)       returns (AllVaultResponse) {}
-  rpc Create (VaultRequest)       returns (VaultResponse) {}
-  rpc Update (VaultRequest)       returns (VaultResponse) {}
-  rpc Delete (google.protobuf.Empty)       returns (google.protobuf.Empty) {}
+  rpc FindVault  (google.protobuf.Empty)       returns (VaultResponse) {}
+  rpc FindAllVaults  (google.protobuf.Empty)       returns (AllVaultResponse) {}
+  rpc CreateVault (VaultRequest)       returns (VaultResponse) {}
+  rpc UpdateVault (VaultRequest)       returns (VaultResponse) {}
+  rpc DeleteVault (google.protobuf.Empty)       returns (google.protobuf.Empty) {}
 }
 
 message VaultResponse {
@@ -41,15 +41,15 @@ message VaultRequest {
 }
 
 service Folder {
-  rpc Find  (google.protobuf.Empty)       returns (FolderResponse) {}
-  rpc FindAll  (google.protobuf.Empty)       returns (AllFolderResponse) {}
-  rpc Create (FolderRequest)       returns (FolderResponse) {}
-  rpc Update (FolderRequest)       returns (FolderResponse) {}
-  rpc Delete (google.protobuf.Empty)       returns (google.protobuf.Empty) {}
+  rpc FindFolder  (google.protobuf.Empty)       returns (FolderResponse) {}
+  rpc FindAllFolders  (google.protobuf.Empty)       returns (AllFolderResponse) {}
+  rpc CreateFolder (FolderRequest)       returns (FolderResponse) {}
+  rpc UpdateFolder (FolderRequest)       returns (FolderResponse) {}
+  rpc DeleteFolder (google.protobuf.Empty)       returns (google.protobuf.Empty) {}
 }
 
 message FolderRequest {
-  string user_id = 1;
+  uint64 user_id = 1;
   string name = 2;
 }
 

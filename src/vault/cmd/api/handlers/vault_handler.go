@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/victorvcruz/password_warehouse/src/protobuf/vault_pb"
 	"google.golang.org/grpc/codes"
@@ -18,6 +17,7 @@ import (
 
 type VaultHandler struct {
 	vault_pb.UnimplementedVaultServer
+	vault_pb.UnimplementedFolderServer
 	vaultService  vault.ServiceClient
 	folderService folder.ServiceClient
 	authService   auth.AuthServiceClient
@@ -32,23 +32,23 @@ func NewVaultHandler(vaultService vault.ServiceClient, folderService folder.Serv
 	}
 }
 
-func (a *VaultHandler) Find(ctx context.Context, _ *empty.Empty) (*vault_pb.VaultResponse, error) {
+func (v *VaultHandler) FindVault(ctx context.Context, _ *empty.Empty) (*vault_pb.VaultResponse, error) {
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Add token")
 	}
 
-	_, err = a.authService.AuthUserToken(token)
+	_, err = v.authService.AuthUserToken(token)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	vaultId, err := strconv.ParseUint(utils.GetMetadata(ctx, "vault_id"), 10, 64)
 	if err != nil {
-		fmt.Println(err)
+		return nil, status.Error(codes.InvalidArgument, "vault_id must be a number")
 	}
 
-	vault, err := a.vaultService.Find(uint(vaultId))
+	vault, err := v.vaultService.Find(vaultId)
 	if err != nil {
 		switch err.(type) {
 		case *errors.NotFound:
@@ -60,18 +60,18 @@ func (a *VaultHandler) Find(ctx context.Context, _ *empty.Empty) (*vault_pb.Vaul
 	return model.VaultResponseToProto(vault), nil
 }
 
-func (a *VaultHandler) FindAll(ctx context.Context, _ *empty.Empty) (*vault_pb.AllVaultResponse, error) {
+func (v *VaultHandler) FindAllVaults(ctx context.Context, _ *empty.Empty) (*vault_pb.AllVaultResponse, error) {
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Add token")
 	}
 
-	id, err := a.authService.AuthUserToken(token)
+	id, err := v.authService.AuthUserToken(token)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	vaults, err := a.vaultService.FindAll(uint(id))
+	vaults, err := v.vaultService.FindAll(uint64(id))
 	if err != nil {
 		switch err.(type) {
 		case *errors.NotFound:
@@ -88,59 +88,174 @@ func (a *VaultHandler) FindAll(ctx context.Context, _ *empty.Empty) (*vault_pb.A
 	return &vault_pb.AllVaultResponse{VaultResponse: respb}, nil
 }
 
-func (a *VaultHandler) Create(ctx context.Context, req *vault_pb.VaultRequest) (*vault_pb.VaultResponse, error) {
+func (v *VaultHandler) CreateVault(ctx context.Context, req *vault_pb.VaultRequest) (*vault_pb.VaultResponse, error) {
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Add token")
 	}
 
-	id, err := a.authService.AuthUserToken(token)
+	id, err := v.authService.AuthUserToken(token)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	vault, err := a.vaultService.Create(model.ProtoToVaultRequest(req, uint64(id)))
+	vault, err := v.vaultService.Create(model.ProtoToVaultRequest(req, uint64(id)))
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 	return model.VaultResponseToProto(vault), nil
 }
 
-func (a *VaultHandler) Update(ctx context.Context, req *vault_pb.VaultRequest) (*vault_pb.VaultResponse, error) {
+func (v *VaultHandler) UpdateVault(ctx context.Context, req *vault_pb.VaultRequest) (*vault_pb.VaultResponse, error) {
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Add token")
 	}
 
-	id, err := a.authService.AuthUserToken(token)
+	id, err := v.authService.AuthUserToken(token)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	vault, err := a.vaultService.Update(model.ProtoToVaultRequest(req, uint64(id)))
+	vault, err := v.vaultService.Update(model.ProtoToVaultRequest(req, uint64(id)))
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 	return model.VaultResponseToProto(vault), nil
 }
 
-func (a *VaultHandler) Delete(ctx context.Context, _ *empty.Empty) (*vault_pb.VaultResponse, error) {
+func (v *VaultHandler) DeleteVault(ctx context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	token, err := utils.BearerToken(ctx)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Add token")
 	}
 
-	_, err = a.authService.AuthUserToken(token)
+	_, err = v.authService.AuthUserToken(token)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	vaultId, err := strconv.ParseUint(utils.GetMetadata(ctx, "vault_id"), 10, 64)
 	if err != nil {
-		fmt.Println(err)
+		return nil, status.Error(codes.InvalidArgument, "vault_id must be a number")
 	}
 
-	err = a.vaultService.Delete(uint(vaultId))
+	err = v.vaultService.Delete(vaultId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+	return nil, nil
+}
+
+func (v *VaultHandler) FindFolder(ctx context.Context, _ *empty.Empty) (*vault_pb.FolderResponse, error) {
+	token, err := utils.BearerToken(ctx)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Add token")
+	}
+
+	_, err = v.authService.AuthUserToken(token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	folderId, err := strconv.ParseUint(utils.GetMetadata(ctx, "folder_id"), 10, 64)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "vault_id must be a number")
+	}
+
+	folder, err := v.folderService.Find(folderId)
+	if err != nil {
+		switch err.(type) {
+		case *errors.NotFound:
+			return nil, status.Error(codes.NotFound, err.Error())
+		default:
+			return nil, status.Error(codes.Internal, "Internal server error")
+		}
+	}
+	return model.FolderResponseToProto(folder), nil
+}
+
+func (v *VaultHandler) FindAllFolders(ctx context.Context, _ *empty.Empty) (*vault_pb.AllFolderResponse, error) {
+	token, err := utils.BearerToken(ctx)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Add token")
+	}
+
+	id, err := v.authService.AuthUserToken(token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	folders, err := v.folderService.FindAllByUserId(uint64(id))
+	if err != nil {
+		switch err.(type) {
+		case *errors.NotFound:
+			return nil, status.Error(codes.NotFound, err.Error())
+		default:
+			return nil, status.Error(codes.Internal, "Internal server error")
+		}
+	}
+
+	respb := make([]*vault_pb.FolderResponse, len(folders))
+	for i := range folders {
+		respb[i] = model.FolderResponseToProto(folders[i])
+	}
+	return &vault_pb.AllFolderResponse{FolderResponse: respb}, nil
+}
+
+func (v *VaultHandler) CreateFolder(ctx context.Context, req *vault_pb.FolderRequest) (*vault_pb.FolderResponse, error) {
+	token, err := utils.BearerToken(ctx)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Add token")
+	}
+
+	id, err := v.authService.AuthUserToken(token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	folder, err := v.folderService.Create(model.ProtoToFolderRequest(req, uint64(id)))
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+	return model.FolderResponseToProto(folder), nil
+}
+
+func (v *VaultHandler) UpdateFolder(ctx context.Context, req *vault_pb.FolderRequest) (*vault_pb.FolderResponse, error) {
+	token, err := utils.BearerToken(ctx)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Add token")
+	}
+
+	id, err := v.authService.AuthUserToken(token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	folder, err := v.folderService.Update(model.ProtoToFolderRequest(req, uint64(id)))
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+	return model.FolderResponseToProto(folder), nil
+}
+
+func (v *VaultHandler) DeleteFolder(ctx context.Context, _ *empty.Empty) (*empty.Empty, error) {
+	token, err := utils.BearerToken(ctx)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Add token")
+	}
+
+	_, err = v.authService.AuthUserToken(token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	folderId, err := strconv.ParseUint(utils.GetMetadata(ctx, "folder_id"), 10, 64)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "folder_id must be a number")
+	}
+
+	err = v.folderService.Delete(folderId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}

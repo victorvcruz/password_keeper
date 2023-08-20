@@ -6,20 +6,20 @@ import (
 )
 
 type ServiceClient interface {
-	Find(id uint) (Response, error)
-	FindAll(userId uint) ([]Response, error)
+	Find(id uint64) (Response, error)
+	FindAll(userId uint64) ([]Response, error)
 	Create(req Request) (Response, error)
 	Update(req Request) (Response, error)
-	Delete(id uint) error
-	FindAllByFolder(folderId uint) ([]Response, error)
+	Delete(id uint64) error
+	FindAllByFolder(folderId uint64) ([]Response, error)
 }
 
 type service struct {
-	db         database.DatabaseClient
+	db         database.Client
 	repository RepositoryClient
 }
 
-func (s service) Find(id uint) (Response, error) {
+func (s service) Find(id uint64) (Response, error) {
 	vault, err := s.repository.FindByID(id)
 	if err != nil {
 		return Response{}, err
@@ -31,7 +31,7 @@ func (s service) Find(id uint) (Response, error) {
 	return vault.ToResponse(), nil
 }
 
-func (s service) FindAll(userId uint) ([]Response, error) {
+func (s service) FindAll(userId uint64) ([]Response, error) {
 	vaults, err := s.repository.FindAllByUserID(userId)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (s service) Update(req Request) (Response, error) {
 	return vault.ToResponse(), nil
 }
 
-func (s service) Delete(id uint) error {
+func (s service) Delete(id uint64) error {
 	err := s.repository.Delete(id)
 	if err != nil {
 		return err
@@ -72,7 +72,7 @@ func (s service) Delete(id uint) error {
 	return nil
 }
 
-func (s service) FindAllByFolder(folderId uint) ([]Response, error) {
+func (s service) FindAllByFolder(folderId uint64) ([]Response, error) {
 	vaults, err := s.repository.FindAllByFolderID(folderId)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (s service) FindAllByFolder(folderId uint) ([]Response, error) {
 }
 
 func NewVaultService(
-	_db database.DatabaseClient,
+	_db database.Client,
 	_repository RepositoryClient,
 ) ServiceClient {
 	return &service{

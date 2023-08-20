@@ -6,19 +6,19 @@ import (
 
 type ServiceClient interface {
 	Create(req Request) (Response, error)
-	FindAllByUserId(userId uint) ([]Response, error)
+	FindAllByUserId(userId uint64) ([]Response, error)
 	Update(req Request) (Response, error)
-	Delete(folderId uint) error
-	Find(folderId uint) (Response, error)
+	Delete(folderId uint64) error
+	Find(folderId uint64) (Response, error)
 }
 
 type service struct {
-	db         database.DatabaseClient
+	db         database.Client
 	repository RepositoryClient
 }
 
 func NewFolderService(
-	_db database.DatabaseClient,
+	_db database.Client,
 	_repository RepositoryClient,
 ) ServiceClient {
 	return &service{
@@ -43,7 +43,7 @@ func (s service) Update(req Request) (Response, error) {
 	return folder.ToResponse(), nil
 }
 
-func (s service) Delete(folderId uint) error {
+func (s service) Delete(folderId uint64) error {
 	err := s.repository.Delete(folderId)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (s service) Delete(folderId uint) error {
 	return nil
 }
 
-func (s service) Find(folderId uint) (Response, error) {
+func (s service) Find(folderId uint64) (Response, error) {
 	folders, err := s.repository.FindByID(folderId)
 	if err != nil {
 		return Response{}, err
@@ -59,7 +59,7 @@ func (s service) Find(folderId uint) (Response, error) {
 	return folders.ToResponse(), nil
 }
 
-func (s service) FindAllByUserId(userId uint) ([]Response, error) {
+func (s service) FindAllByUserId(userId uint64) ([]Response, error) {
 	folders, err := s.repository.FindAllByUserId(userId)
 	if err != nil {
 		return nil, err
