@@ -8,22 +8,22 @@ import (
 
 var bytes = []byte{35, 46, 57, 24, 85, 35, 24, 74, 87, 35, 88, 98, 66, 32, 14, 05}
 
-type CryptoServiceClient interface {
+type ServiceClient interface {
 	Encrypt(text string) (string, error)
 	Decrypt(text string) (string, error)
 }
 
-type cryptoService struct {
+type service struct {
 	secret string
 }
 
-func NewCrypto(_secret string) CryptoServiceClient {
-	return &cryptoService{
+func NewCrypto(_secret string) ServiceClient {
+	return &service{
 		secret: _secret,
 	}
 }
 
-func (a *cryptoService) Encrypt(text string) (string, error) {
+func (a *service) Encrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secret))
 	if err != nil {
 		return "", err
@@ -35,7 +35,7 @@ func (a *cryptoService) Encrypt(text string) (string, error) {
 	return base64.StdEncoding.EncodeToString(cipherText), nil
 }
 
-func (a *cryptoService) Decrypt(text string) (string, error) {
+func (a *service) Decrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secret))
 	if err != nil {
 		return "", err

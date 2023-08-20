@@ -9,24 +9,24 @@ import (
 
 var bytes = []byte{35, 46, 57, 24, 85, 35, 24, 74, 87, 35, 88, 98, 66, 32, 14, 05}
 
-type CryptoServiceClient interface {
+type ServiceClient interface {
 	Encrypt(text string) (string, error)
 	Decrypt(text string) (string, error)
 }
 
-type cryptoService struct {
+type service struct {
 	secret    string
 	secretApi string
 }
 
-func NewCrypto() CryptoServiceClient {
-	return &cryptoService{
+func NewCrypto() ServiceClient {
+	return &service{
 		secret:    os.Getenv("CRYPTO_SECRET"),
 		secretApi: os.Getenv("CRYPTO_SECRET_API"),
 	}
 }
 
-func (a *cryptoService) Encrypt(text string) (string, error) {
+func (a *service) Encrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secret))
 	if err != nil {
 		return "", err
@@ -38,7 +38,7 @@ func (a *cryptoService) Encrypt(text string) (string, error) {
 	return base64.StdEncoding.EncodeToString(cipherText), nil
 }
 
-func (a *cryptoService) Decrypt(text string) (string, error) {
+func (a *service) Decrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secret))
 	if err != nil {
 		return "", err
@@ -55,7 +55,7 @@ func (a *cryptoService) Decrypt(text string) (string, error) {
 	return string(plainText), nil
 }
 
-func (a *cryptoService) EncryptApi(text string) (string, error) {
+func (a *service) EncryptApi(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secretApi))
 	if err != nil {
 		return "", err
@@ -67,7 +67,7 @@ func (a *cryptoService) EncryptApi(text string) (string, error) {
 	return base64.StdEncoding.EncodeToString(cipherText), nil
 }
 
-func (a *cryptoService) DecryptApi(text string) (string, error) {
+func (a *service) DecryptApi(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(a.secretApi))
 	if err != nil {
 		return "", err

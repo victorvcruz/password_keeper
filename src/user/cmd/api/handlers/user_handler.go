@@ -15,14 +15,14 @@ import (
 
 type UserHandler struct {
 	user_pb.UnimplementedUserServer
-	userService user.UserServiceClient
-	authService auth.AuthServiceClient
+	userService user.ServiceClient
+	authService auth.ServiceClient
 	validate    *validator.Validate
 }
 
 func NewUserHandler(
-	_userService user.UserServiceClient,
-	_authService auth.AuthServiceClient,
+	_userService user.ServiceClient,
+	_authService auth.ServiceClient,
 	_validate *validator.Validate,
 ) *UserHandler {
 	return &UserHandler{
@@ -34,7 +34,7 @@ func NewUserHandler(
 
 func (u *UserHandler) CreateUser(_ context.Context, req *user_pb.UserRequest) (*user_pb.UserResponse, error) {
 
-	user := user.UserRequest{Name: req.Name, Email: req.Email, MasterPassword: req.MasterPassword}
+	user := user.Request{Name: req.Name, Email: req.Email, MasterPassword: req.MasterPassword}
 
 	err := u.validate.Struct(user)
 	if err != nil {
@@ -86,7 +86,7 @@ func (u *UserHandler) UpdateUser(ctx context.Context, req *user_pb.UserRequest) 
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	user := user.UserRequest{Name: req.Name, Email: req.Email, MasterPassword: req.MasterPassword}
+	user := user.Request{Name: req.Name, Email: req.Email, MasterPassword: req.MasterPassword}
 	err = u.validate.Struct(user)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, utils.RequestUserValidate(err))

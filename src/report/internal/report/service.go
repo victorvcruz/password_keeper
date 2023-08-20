@@ -1,22 +1,22 @@
 package report
 
-type ReportServiceClient interface {
-	CreateReport(report ReportRequest) error
+type ServiceClient interface {
+	CreateReport(report Request) error
 	FindReportsByUserId(id string) ([]Report, error)
 }
 
-type reportService struct {
-	ReportServiceClient
-	repository ReportRepositoryClient
+type service struct {
+	ServiceClient
+	repository RepositoryClient
 }
 
-func NewReportService(_repository ReportRepositoryClient) ReportServiceClient {
-	return &reportService{
+func NewReportService(_repository RepositoryClient) ServiceClient {
+	return &service{
 		repository: _repository,
 	}
 }
 
-func (r reportService) CreateReport(req ReportRequest) error {
+func (r *service) CreateReport(req Request) error {
 
 	var report Report
 	report.FillFields(req.Action, req.UserId, req.VaultId, req.Description)
@@ -28,7 +28,7 @@ func (r reportService) CreateReport(req ReportRequest) error {
 	return nil
 }
 
-func (r reportService) FindReportsByUserId(id string) ([]Report, error) {
+func (r *service) FindReportsByUserId(id string) ([]Report, error) {
 
 	reports, err := r.repository.FindByUserId(id)
 	if err != nil {

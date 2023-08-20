@@ -31,7 +31,7 @@ func main() {
 
 	authRepository := auth.NewAuthRepository(database)
 
-	authService := auth.NewAuthService(database, authRepository, userService, crypto, token)
+	authService := auth.NewAuthService(authRepository, userService, crypto, token)
 
 	authHandler := handlers.NewAuthHandler(authService)
 

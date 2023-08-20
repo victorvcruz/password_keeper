@@ -20,6 +20,17 @@ func (r *Report) TableName() string {
 	return "reports"
 }
 
+func (r *Report) BeforeCreate(_ *gorm.DB) (err error) {
+	r.CreatedAt = time.Now()
+	r.UpdatedAt = time.Now()
+	return nil
+}
+
+func (r *Report) BeforeUpdate(_ *gorm.DB) (err error) {
+	r.UpdatedAt = time.Now()
+	return nil
+}
+
 func (r *Report) FillFields(action string, userId, vaultId int64, description string) {
 	now := time.Now()
 

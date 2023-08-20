@@ -1,6 +1,6 @@
 package report
 
-type ReportRequest struct {
+type Request struct {
 	Action      string `json:"action"`
 	Description string `json:"description"`
 	UserId      int64  `json:"userId"`

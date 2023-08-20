@@ -10,19 +10,19 @@ import (
 	"user.com/internal/utils/errors"
 )
 
-type AuthServiceClient interface {
+type ServiceClient interface {
 	AuthUserToken(acessToken string) (int64, error)
 	AuthServiceToken(acessToken string) error
 	Login(service string) (string, error)
 }
 
-type authService struct {
+type service struct {
 	client   auth_pb.AuthClient
 	ctx      context.Context
 	apiToken string
 }
 
-func NewAuthService() AuthServiceClient {
+func NewAuthService() ServiceClient {
 
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -32,7 +32,7 @@ func NewAuthService() AuthServiceClient {
 		log.Fatal(err)
 	}
 
-	auth := authService{
+	auth := service{
 		ctx: context.Background(),
 	}
 
@@ -40,7 +40,7 @@ func NewAuthService() AuthServiceClient {
 	return &auth
 }
 
-func (a *authService) AuthUserToken(acessToken string) (int64, error) {
+func (a *service) AuthUserToken(acessToken string) (int64, error) {
 	auth, err := a.client.AuthToken(a.ctx, &auth_pb.AuthTokenRequest{AcessToken: acessToken})
 	if err != nil {
 		return 0, err
@@ -53,7 +53,7 @@ func (a *authService) AuthUserToken(acessToken string) (int64, error) {
 	return auth.Id, nil
 }
 
-func (a *authService) AuthServiceToken(acessToken string) error {
+func (a *service) AuthServiceToken(acessToken string) error {
 	auth, err := a.client.AuthApi(a.ctx, &auth_pb.AuthTokenService{AcessToken: acessToken})
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (a *authService) AuthServiceToken(acessToken string) error {
 	return nil
 }
 
-func (a *authService) Login(service string) (string, error) {
+func (a *service) Login(service string) (string, error) {
 	auth, err := a.client.LoginApi(a.ctx, &auth_pb.LoginService{ServiceConn: service, ApiToken: a.apiToken})
 	if err != nil {
 		return "", err

@@ -4,7 +4,7 @@ import (
 	"user.com/internal/platform/database"
 )
 
-type UserRepositoryClient interface {
+type RepositoryClient interface {
 	Create(user *User) error
 	Update(user *User) error
 	ExistEmail(email string) bool
@@ -13,17 +13,17 @@ type UserRepositoryClient interface {
 	Delete(user *User) error
 }
 
-type userRepository struct {
-	db database.DatabaseClient
+type repository struct {
+	db database.Client
 }
 
-func NewUserRepository(_db database.DatabaseClient) UserRepositoryClient {
-	return &userRepository{
+func NewUserRepository(_db database.Client) RepositoryClient {
+	return &repository{
 		db: _db,
 	}
 }
 
-func (u *userRepository) Create(user *User) error {
+func (u *repository) Create(user *User) error {
 	err := u.db.DB().Create(user).Error
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (u *userRepository) Create(user *User) error {
 	return nil
 }
 
-func (u *userRepository) Update(user *User) error {
+func (u *repository) Update(user *User) error {
 	err := u.db.DB().Save(user).Error
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (u *userRepository) Update(user *User) error {
 	return nil
 }
 
-func (u *userRepository) ExistEmail(email string) bool {
+func (u *repository) ExistEmail(email string) bool {
 	var exists bool
 	u.db.DB().Model(&User{}).
 		Select("count(*) > 0").
@@ -49,7 +49,7 @@ func (u *userRepository) ExistEmail(email string) bool {
 	return exists
 }
 
-func (u *userRepository) FindById(id int64) (*User, error) {
+func (u *repository) FindById(id int64) (*User, error) {
 	var user User
 	err := u.db.DB().Where("id = ? AND deleted_at is null", id).Find(&user).Error
 	if err != nil {
@@ -63,7 +63,7 @@ func (u *userRepository) FindById(id int64) (*User, error) {
 	return &user, nil
 }
 
-func (u *userRepository) Delete(user *User) error {
+func (u *repository) Delete(user *User) error {
 	err := u.db.DB().Delete(user).Error
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (u *userRepository) Delete(user *User) error {
 	return nil
 }
 
-func (u *userRepository) FindByData(id, name, email string) (*User, error) {
+func (u *repository) FindByData(id, name, email string) (*User, error) {
 	var user User
 	err := u.db.DB().Where("id LIKE ? AND email LIKE ? AND name LIKE ? AND deleted_at is null",
 		"%"+id+"%", "%"+email+"%", "%"+name+"%").

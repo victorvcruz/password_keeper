@@ -9,23 +9,23 @@ import (
 	"strings"
 )
 
-type TokenServiceClient interface {
+type ServiceClient interface {
 	CreateTokenByID(id int64) (string, error)
 	CreateRandomToken() (string, error)
 	DecodeTokenReturnId(token string) (string, error)
 }
 
-type TokenService struct {
+type Service struct {
 	key string
 }
 
-func NewTokenService() TokenServiceClient {
-	return &TokenService{
+func NewTokenService() ServiceClient {
+	return &Service{
 		key: os.Getenv("JWT_TOKEN_KEY"),
 	}
 }
 
-func (t *TokenService) CreateTokenByID(id int64) (string, error) {
+func (t *Service) CreateTokenByID(id int64) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id": id,
@@ -39,7 +39,7 @@ func (t *TokenService) CreateTokenByID(id int64) (string, error) {
 	return tokenString, err
 }
 
-func (t *TokenService) CreateRandomToken() (string, error) {
+func (t *Service) CreateRandomToken() (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id": uuid.New(),
@@ -53,7 +53,7 @@ func (t *TokenService) CreateRandomToken() (string, error) {
 	return tokenString, err
 }
 
-func (t *TokenService) DecodeTokenReturnId(token string) (string, error) {
+func (t *Service) DecodeTokenReturnId(token string) (string, error) {
 
 	tokenStr := strings.ReplaceAll(token, "Bearer ", "")
 	tokenDecode := jwt.MapClaims{}

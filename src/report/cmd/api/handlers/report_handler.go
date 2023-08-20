@@ -12,10 +12,10 @@ import (
 
 type ReportHandler struct {
 	report_pb.UnimplementedReportServer
-	reportService report.ReportServiceClient
+	reportService report.ServiceClient
 }
 
-func NewReportHandler(_reportService report.ReportServiceClient) *ReportHandler {
+func NewReportHandler(_reportService report.ServiceClient) *ReportHandler {
 	return &ReportHandler{
 		reportService: _reportService,
 	}
@@ -23,7 +23,7 @@ func NewReportHandler(_reportService report.ReportServiceClient) *ReportHandler 
 
 func (r *ReportHandler) CreateReport(_ context.Context, req *report_pb.ReportRequest) (*report_pb.ReportResponse, error) {
 
-	report := report.ReportRequest{
+	report := report.Request{
 		Action:      req.Action,
 		Description: req.Description,
 		UserId:      req.UserId,

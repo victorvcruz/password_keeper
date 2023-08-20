@@ -5,28 +5,28 @@ import (
 	"user.com/internal/utils/errors"
 )
 
-type UserServiceClient interface {
-	CreateUser(user UserRequest) error
-	UpdateUser(id int64, req UserRequest) error
+type ServiceClient interface {
+	CreateUser(user Request) error
+	UpdateUser(id int64, req Request) error
 	FindUserById(id int64) (*User, error)
 	FindUserByData(id, name, email string) (*User, error)
 	DeleteUser(id int64) error
 }
 
-type userService struct {
-	UserServiceClient
-	repository UserRepositoryClient
-	crypto     crypto.CryptoServiceClient
+type service struct {
+	ServiceClient
+	repository RepositoryClient
+	crypto     crypto.ServiceClient
 }
 
-func NewUserService(_repository UserRepositoryClient, _crypto crypto.CryptoServiceClient) UserServiceClient {
-	return &userService{
+func NewUserService(_repository RepositoryClient, _crypto crypto.ServiceClient) ServiceClient {
+	return &service{
 		repository: _repository,
 		crypto:     _crypto,
 	}
 }
 
-func (u *userService) CreateUser(req UserRequest) error {
+func (u *service) CreateUser(req Request) error {
 
 	if exist := u.repository.ExistEmail(req.Email); exist {
 		return &errors.ConflictEmailError{}
@@ -47,7 +47,7 @@ func (u *userService) CreateUser(req UserRequest) error {
 	return nil
 }
 
-func (u *userService) UpdateUser(id int64, req UserRequest) error {
+func (u *service) UpdateUser(id int64, req Request) error {
 
 	if exist := u.repository.ExistEmail(req.Email); exist {
 		return &errors.ConflictEmailError{}
@@ -75,7 +75,7 @@ func (u *userService) UpdateUser(id int64, req UserRequest) error {
 	return nil
 }
 
-func (u *userService) FindUserById(id int64) (*User, error) {
+func (u *service) FindUserById(id int64) (*User, error) {
 
 	user, err := u.repository.FindById(id)
 	if err != nil {
@@ -85,7 +85,7 @@ func (u *userService) FindUserById(id int64) (*User, error) {
 	return user, nil
 }
 
-func (u *userService) FindUserByData(id, name, email string) (*User, error) {
+func (u *service) FindUserByData(id, name, email string) (*User, error) {
 
 	user, err := u.repository.FindByData(id, name, email)
 	if err != nil {
@@ -95,7 +95,7 @@ func (u *userService) FindUserByData(id, name, email string) (*User, error) {
 	return user, nil
 }
 
-func (u *userService) DeleteUser(id int64) error {
+func (u *service) DeleteUser(id int64) error {
 
 	user, err := u.repository.FindById(id)
 	if err != nil {

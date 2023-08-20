@@ -2,7 +2,7 @@ package report
 
 import "time"
 
-type ReportResponse struct {
+type Response struct {
 	Action      string    `json:"action"`
 	Description string    `json:"description"`
 	UserId      string    `json:"userId"`

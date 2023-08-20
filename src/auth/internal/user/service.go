@@ -11,17 +11,17 @@ import (
 	"strconv"
 )
 
-type UserServiceClient interface {
+type ServiceClient interface {
 	UserById(id int64) (*UserDTO, error)
 	UserByEmail(email string) (*UserDTO, error)
 }
 
-type userService struct {
+type service struct {
 	client user_pb.UserClient
 	ctx    context.Context
 }
 
-func NewUserService() UserServiceClient {
+func NewUserService() ServiceClient {
 
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -31,13 +31,13 @@ func NewUserService() UserServiceClient {
 		log.Fatal(err)
 	}
 	_client := user_pb.NewUserClient(conn)
-	return &userService{
+	return &service{
 		client: _client,
 		ctx:    context.Background(),
 	}
 }
 
-func (u *userService) UserByEmail(email string) (*UserDTO, error) {
+func (u *service) UserByEmail(email string) (*UserDTO, error) {
 	md := metadata.New(map[string]string{"userEmail": email})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	user, err := u.client.FindUserByData(ctx, &user_pb.Empty{})
@@ -48,7 +48,7 @@ func (u *userService) UserByEmail(email string) (*UserDTO, error) {
 	return u.userResponseToDto(user), nil
 }
 
-func (u *userService) UserById(id int64) (*UserDTO, error) {
+func (u *service) UserById(id int64) (*UserDTO, error) {
 	md := metadata.New(map[string]string{"id": strconv.FormatInt(id, 10)})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	user, err := u.client.FindUserByData(ctx, &user_pb.Empty{})
@@ -59,7 +59,7 @@ func (u *userService) UserById(id int64) (*UserDTO, error) {
 	return u.userResponseToDto(user), nil
 }
 
-func (u *userService) userResponseToDto(response *user_pb.DetailedUserResponse) *UserDTO {
+func (u *service) userResponseToDto(response *user_pb.DetailedUserResponse) *UserDTO {
 	return &UserDTO{
 		Id:             response.Id,
 		Name:           response.Name,
