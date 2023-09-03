@@ -2,7 +2,7 @@ package api
 
 import (
 	"fmt"
-	"github.com/victorvcruz/password_warehouse/src/protobuf/report_pb"
+	"github.com/victorvcruz/password_warehouse/protobuf/report_pb"
 	"google.golang.org/grpc"
 	"net"
 	"os"

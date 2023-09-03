@@ -37,7 +37,9 @@ func main() {
 
 	vaultHandler := handlers.NewVaultHandler(vaultService, folderService, authService)
 
-	err = api.New(vaultHandler)
+	folderHandler := handlers.NewFolderHandler(folderService, authService)
+
+	err = api.New(vaultHandler, folderHandler)
 	if err != nil {
 		log.Fatalf("[START SERVER FAIL]: %s", err.Error())
 	}

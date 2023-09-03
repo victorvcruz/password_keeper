@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"github.com/victorvcruz/password_warehouse/src/protobuf/user_pb"
+	"github.com/victorvcruz/password_warehouse/protobuf/user_pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"

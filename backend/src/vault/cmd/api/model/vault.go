@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/victorvcruz/password_warehouse/src/protobuf/vault_pb"
+	"github.com/victorvcruz/password_warehouse/protobuf/vault_pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"vault.com/internal/folder"
 	"vault.com/internal/vault"

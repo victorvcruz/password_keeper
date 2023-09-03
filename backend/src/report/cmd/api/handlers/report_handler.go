@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/victorvcruz/password_warehouse/src/protobuf/report_pb"
+	"github.com/victorvcruz/password_warehouse/protobuf/report_pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"report.com/internal/report"

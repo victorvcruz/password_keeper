@@ -39,10 +39,8 @@ github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PKk=
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
-github.com/victorvcruz/password_warehouse/protobuf v0.0.0-20230818141125-8519e6da5e72 h1:5ywzW9CKKCiJCRp1e0dUIb5wtVhCVxQZMqFEh1hVzQ8=
-github.com/victorvcruz/password_warehouse/protobuf v0.0.0-20230818141125-8519e6da5e72/go.mod h1:VHmndyOrakT2ukxdPGvx6c8c29sqV5izeSAj6m8kmDI=
-github.com/victorvcruz/password_warehouse/src/protobuf v0.0.0-20230818175203-0875d7056ca5 h1:/I/KQ4XviZnCLM49GVfMjxfC8haVxAXxUSjIz+D/yjs=
-github.com/victorvcruz/password_warehouse/src/protobuf v0.0.0-20230818175203-0875d7056ca5/go.mod h1:Eo++KNRfVRuAottc+vb8sACUvAN60FuRYYmTBjd5qR8=
+github.com/victorvcruz/password_warehouse/protobuf v0.0.0-20230903115853-2602cd1f1bac h1:vYLsyUI3WsKKSpVlUFHWgK3lFzrlUkvgdIN6ZZen0OA=
+github.com/victorvcruz/password_warehouse/protobuf v0.0.0-20230903115853-2602cd1f1bac/go.mod h1:VHmndyOrakT2ukxdPGvx6c8c29sqV5izeSAj6m8kmDI=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.uber.org/atomic v1.10.0/go.mod h1:LUxbIzbOniOlMKjJjyPfpl4v+PKK2cNJn91OQbhoJI0=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=

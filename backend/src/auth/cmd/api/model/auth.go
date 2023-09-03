@@ -3,7 +3,7 @@ package model
 import (
 	"auth.com/internal/auth"
 	"encoding/json"
-	"github.com/victorvcruz/password_warehouse/src/protobuf/auth_pb"
+	"github.com/victorvcruz/password_warehouse/protobuf/auth_pb"
 	"google.golang.org/protobuf/encoding/protojson"
 	"log"
 )
