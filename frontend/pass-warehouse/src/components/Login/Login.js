@@ -3,13 +3,22 @@ import { useNavigate } from "react-router-dom";
 import './Login.css'; // Importe o arquivo CSS aqui
 
 const Login = () => {
-    const [email, setEmail] = useState("");
+    const initialState = {
+        email: "",
+        password: ""
+    };
+
+    const [inputs, setInputs] = useState(initialState);
 
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        alert(`The name you entered was: ${email}`);
-        navigate('/null-page');
+        navigate('/home', {state: {inputs: inputs}});
+    };
+
+    const handleOnchange = (text, input) => {
+        setInputs(prevState => ({...prevState, [input]: text.target.value}));
+        console.log(inputs)
     };
 
     return (
@@ -45,15 +54,14 @@ const Login = () => {
                                 {/* Email input */}
                                 <div class="form-outline mb-4">
                                     <input type="email" id="form3Example3" class="form-control form-control-lg"
-                                        placeholder="Enter a valid email address" value={email}
-                                        onChange={(e) => setEmail(e.target.value)}/>
+                                        placeholder="Enter a valid email address"  onChange={text => handleOnchange(text, 'email')}/>
                                     <label class="form-label" for="form3Example3">Email address</label>
                                 </div>
 
                                 {/* Password input */}
                                 <div class="form-outline mb-3">
                                     <input type="password" id="form3Example4" class="form-control form-control-lg"
-                                        placeholder="Enter password" />
+                                        placeholder="Enter password" onChange={text => handleOnchange(text, 'password')}/>
                                     <label class="form-label" for="form3Example4">Password</label>
                                 </div>
 
