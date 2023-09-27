@@ -18,10 +18,12 @@ export const LoginProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [user, setUser] = useState<Login | null>(null);
 
   const login = (loginData: Login) => {
+    localStorage.setItem('token', 'seu-token-de-autenticacaoasdasd');
     setUser(loginData);
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
     setUser(null);
   };
 
